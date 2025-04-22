@@ -13,9 +13,8 @@ const paginas = ref([
 <header class="relative w-full ">
   <nav class="bg-black text-white p-4">
     <ul class="flex flex-col md:flex-row md:justify-between items-center text-center space-y-4 md:space-y-0">
-      <li class="text-red-500 font-bold text-lg">
-        <span class="text-red-500 block">EL CHURRASCO</span>
-        <span class="text-white block">RESTAURANTE</span>
+      <li class="font-bold text-lg">
+        <span class="text-red-500">EL CHURRASCO</span> <span class="text-white">RESTAURANTE</span>
       </li>
     
       <li>

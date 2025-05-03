@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <section class="p-3 rounded-xl m-2 shadow-md bg-white w-full md:w-2/5 lg:w-1/3">
+  <section class="p-3 rounded-xl  shadow-md bg-white w-full md:w-2/5 lg:w-1/3">
     <h1 class="font-bold text-xl text-center mb-5">Conozca algunos de los imperdibles de El Churrasco Restaurante</h1>
     
     <p class="text-center text-sm mb-10">

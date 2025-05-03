@@ -39,7 +39,6 @@ const scrollLeft = () => {
         scrollToIndex();
     }
 };
-
 //scroll a la derecha
 const scrollRight = () => {
     if (currentIndex.value < maxIndex.value) {

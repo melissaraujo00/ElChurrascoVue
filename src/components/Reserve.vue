@@ -4,7 +4,7 @@ import { ref } from "vue";
 const formNames = ref([
     { id: 1, name: 'Nombre', for: 'name', type: 'text'},
     { id: 2, name: 'Fecha', for: 'date', type: 'date'},
-    { id: 3, name: 'Hora', for: 'hour', type: 'text'},
+    { id: 3, name: 'Hora', for: 'hour', type: 'time'},
     { id: 4, name: 'Numero Personas', for: 'people', type: 'number'},
 ]);
 

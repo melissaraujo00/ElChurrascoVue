@@ -14,6 +14,23 @@ const information = ref([
     { id: 3, title: 'Correo Electrónico', content: 'elchurrascosv@outlook.com'}
 ])
 
+
+const formValues = ref({
+    name: '',
+    date: '',
+    hour: '',
+    people: ''
+});
+
+const clearForm = () => {
+    formValues.value = {
+        name: '',
+        date: '',
+        hour: '',
+        people: ''
+    };
+};
+
 </script>
 
 <template>
@@ -35,24 +52,24 @@ const information = ref([
   
       <div class="p-20 mt-3 bg-gray-300 flex flex-col items-center md:col-span-1 col-span-2">
         <h2 class="text-5xl font-bold mb-7 text-center">¡Reserva Aquí!</h2>
-        <form v-for="formName in formNames" :key="formName.id" class="w-full max-w-lg flex flex-col items-center">
-          <div class="p-3 m-3 w-full">
-            <label :for="formName.for" class="block text-lg mb-1">{{ formName.name }}</label>
-            <input
-              :type="formName.type"
-              :id="formName.for"
-              :name="formName.for"
-              class="w-full p-2 bg-white text-black rounded-md"
+        <form @submit.prevent="clearForm" class="w-full max-w-lg flex flex-col items-center">
+            <div v-for="formName in formNames" :key="formName.id" class="p-3 m-3 w-full">
+                <label :for="formName.for" class="block text-lg mb-1">{{ formName.name }}</label>
+                <input
+                    v-model="formValues[formName.for]"
+                    :type="formName.type"
+                    :id="formName.for"
+                    :name="formName.for"
+                    class="w-full p-2 bg-white text-black rounded-md"
+                >
+            </div>
+            <button
+                type="submit"
+                class="w-1/2 max-w-xs py-2 bg-red-600 text-white rounded-md hover:bg-amber-400 transition duration-300"
             >
-          </div>
+                Enviar
+            </button>
         </form>
-
-        <button
-          type="submit"
-          class="w-1/2 max-w-xs py-2 bg-red-600 text-white rounded-md hover:bg-amber-400 transition duration-300"
-        >
-          Enviar
-        </button>
       </div>
   
       <div class="p-4 m-1 md:col-span-1 col-span-2">

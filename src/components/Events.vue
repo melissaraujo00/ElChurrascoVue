@@ -12,7 +12,7 @@ const events = ref([
 <template>
 <div class="inset-0 bg-gray-200">
     <div class="relative w-full h-60 sm:h-80">
-        <img src="/dist/img/evento-1.jpg" alt="" class="absolute inset-0 w-full h-full object-cover object-center shadow-lg" />
+        <img src="/dist/img/bannerEvent.jpg" alt="" class="absolute inset-0 w-full h-full object-cover object-[50%_10%] shadow-lg" />
         <div class="absolute inset-0 bg-gray-950/65"></div>
         <div class="absolute w-full inset-0 flex items-center justify-center">
             <h2 class="text-lg sm:text-2xl md:text-4xl lg:text-5xl text-white font-bold text-center px-4 leading-tight">

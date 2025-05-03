@@ -39,7 +39,7 @@ const dishes = ref([
 <template >
     <div v-for="specialty in specialties" :key="specialty.id" class="relative w-full h-auto shadow-xl ">
         <div class="relative w-full h-auto ">
-            <div class="absolute inset-0 bg-gray-950/25 shadow-lg"></div>
+            <div class="absolute inset-0 bg-gray-950/55 shadow-lg"></div>
             <img :src="specialty.image" alt="Imagen especialidad" class="w-full min-h-[30px] sm:h-[80px] md:h-[120px] lg:h-[150px] object-cover" />
             </div>
 

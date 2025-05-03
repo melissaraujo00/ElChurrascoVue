@@ -6,7 +6,7 @@
         
      
         <img 
-          src="../../../public/img/imagenNegocio.jpeg" 
+          src="../../../public/img/principal.jpg" 
           alt="Imagen negocio"
           class="w-full h-64 sm:h-72 md:h-80 lg:h-96 object-cover object-center"
         >

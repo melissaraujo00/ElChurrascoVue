@@ -1,10 +1,10 @@
 <script setup>
 import { ref } from "vue";
 const events = ref([
-    { id: 1, eventDate: '10 Mayo', eventName: 'Degustación de postres artesanales', offer: '20% de descuento en todos los postres', image: '/dist/img/evento-1.jpg' },
-    { id: 2, eventDate: '15 Mayo', eventName: 'Noche de parrillada', offer: '2x1 en cortes seleccionados', image: '/dist/img/evento-2.jpg' },
-    { id: 3, eventDate: '20 Mayo', eventName: 'Festival de bebidas', offer: 'Bebidas gratis con tu comida', image: '/dist/img/evento-3.jpg' },
-    { id: 4, eventDate: '25 Mayo', eventName: 'Cena romántica', offer: 'Cena para dos con 30% de descuento', image: '/dist/img/evento-4.jpg' },
+    { id: 1, eventDate: '10 Mayo', eventName: 'Degustación de postres artesanales', offer: '20% de descuento en todos los postres', image: '/img/evento-1.jpg' },
+    { id: 2, eventDate: '15 Mayo', eventName: 'Noche de parrillada', offer: '2x1 en cortes seleccionados', image: '/img/evento-2.jpg' },
+    { id: 3, eventDate: '20 Mayo', eventName: 'Festival de bebidas', offer: 'Bebidas gratis con tu comida', image: '/img/evento-3.jpg' },
+    { id: 4, eventDate: '25 Mayo', eventName: 'Cena romántica', offer: 'Cena para dos con 30% de descuento', image: '/img/evento-4.jpg' },
 ]);
 
 </script>
@@ -12,7 +12,7 @@ const events = ref([
 <template>
 <div class="inset-0 bg-gray-200">
     <div class="relative w-full h-60 sm:h-80">
-        <img src="/dist/img/bannerEvent.jpg" alt="" class="absolute inset-0 w-full h-full object-cover object-[50%_10%] shadow-lg" />
+        <img src="/img/bannerEvent.jpg" alt="" class="absolute inset-0 w-full h-full object-cover object-[50%_10%] shadow-lg" />
         <div class="absolute inset-0 bg-gray-950/65"></div>
         <div class="absolute w-full inset-0 flex items-center justify-center">
             <h2 class="text-lg sm:text-2xl md:text-4xl lg:text-5xl text-white font-bold text-center px-4 leading-tight">

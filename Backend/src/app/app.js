@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import connectDB from '../database/database.js'; 
 import cookieParser from 'cookie-parser';
 import login from '../router/login.js'; 
+import cors from "cors";
 
 const app = express();
 connectDB();

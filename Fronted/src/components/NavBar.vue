@@ -2,10 +2,10 @@
 import { ref } from 'vue'
 
 const paginas = ref([
-  { name: 'Inicio', enlaceHTML: '#/' },
-  { name: 'Menú', enlaceHTML: '#/menu' },
-  { name: 'Reservar', enlaceHTML: '#/reserve' },
-  { name: 'Eventos', enlaceHTML: '#/events' },
+  { page: 'Inicio', name: 'Home' },
+  { page: 'Menú', name: 'Menu' },
+  { page: 'Reservar', name: 'Reserve' },
+  { page: 'Eventos', name: 'Events' },
 ])
 </script>
 
@@ -20,10 +20,10 @@ const paginas = ref([
       <li>
           <ul class="flex space-x-4">
             <li v-for="pagina in paginas" :key="pagina.name" class="hover:bg-red-500 p-2">
-              <a :href="pagina.enlaceHTML" class="transition-colors duration-200">
-                {{ pagina.name }}
-              </a>
-          </li>
+              <router-link :to="{ name: pagina.name }" class="transition-colors duration-200">
+                {{ pagina.page }}
+              </router-link>
+            </li>
         </ul>
       </li>
     </ul>

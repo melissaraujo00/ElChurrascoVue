@@ -1,14 +1,15 @@
-//servidor
+// src/app/app.js
 import express from 'express';
 import morgan from 'morgan';
+import connectDB from '../database/database.js'; 
+import cookieParser from 'cookie-parser';
+import login from '../router/login.js'; 
 import cors from "cors";
-import connectDB from '../database/database.js'; // ajusta la ruta si es necesario
 
 const app = express();
-
-// Conexión a MongoDB
 connectDB();
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(morgan('dev'));
 app.use(cors({
@@ -16,8 +17,9 @@ app.use(cors({
   credentials: true, 
 }));
 
+app.use('/login', login); 
 app.get('/', (req, res) => {
-  res.send('This is express');
+  res.send('Bienvenido al Banckend del El Churrasco');
 });
 
 export default app;

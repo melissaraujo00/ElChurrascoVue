@@ -19,6 +19,12 @@ const loginSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    phone: {
+        type: String,
+        required: true,
+        unique: true,
+        min: 8,
+    },
     password: {
         type: String,
         required: true,
@@ -26,10 +32,9 @@ const loginSchema = new mongoose.Schema({
     },
     roles: {
         type: [String], 
-        enum: ['user', 'admin', 'profesor'], 
+        enum: ['user', 'admin'], 
         default: 'user'
-    },
-    roadmaps: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Roadmap' }]
+    }
 });
 
 

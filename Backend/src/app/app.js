@@ -9,17 +9,24 @@ import orderRoutes from '../router/order.js';
 import reservationRouter from '../router/reservation.js';
 import galleryRouter from '../router/gallery.js';
 import cors from "cors";
+import { fileURLToPath } from 'url';
+import path from 'path';
 
 const app = express();
 connectDB();
 
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Hacer pública la carpeta 'public' (y por ende /uploads dentro)
+app.use(express.static(path.join(__dirname, '../../public')));
+
+
 app.use(cookieParser());
 app.use(express.json());
 app.use(morgan('dev'));
-app.use(cors({
-  origin: process.env.URL_CORS_ORIGIN,  
-  credentials: true, 
-}));
+app.use(cors());
 
 app.use('/specialty', specialtyRouter); 
 app.use('/login', login);

@@ -7,23 +7,35 @@ const paginas = ref([
   { page: 'Reservar', name: 'Reserve' },
   { page: 'Eventos', name: 'Events' },
 ])
+
+
 </script>
 
 <template>
 <header class="relative w-full ">
-  <nav class="bg-black text-white p-4">
+  <nav class=" text-white p-4 bg-linear-65 from-black to-red-700">
     <ul class="flex flex-col md:flex-row md:justify-between items-center text-center space-y-4 md:space-y-0">
       <li class="font-bold text-lg">
-        <span class="text-red-500">EL CHURRASCO</span> <span class="text-white">RESTAURANTE</span>
+        <img src="/img/logochurrasco.png" alt="logo classico" class="w-25 h-15 mx-auto md:mx-0 ">
       </li>
     
       <li>
           <ul class="flex space-x-4">
-            <li v-for="pagina in paginas" :key="pagina.name" class="hover:bg-red-500 p-2">
+            <li v-for="pagina in paginas" :key="pagina.name" class="hover:bg-gray-100 hover:text-black p-2">
               <router-link :to="{ name: pagina.name }" class="transition-colors duration-200">
                 {{ pagina.page }}
               </router-link>
             </li>
+            <button class="bg-white text-black px-4 py-2 rounded hover:bg-gray-200">
+                <router-link to="{name: 'Register'}" class="transition-colors duration-200">
+                  Registrarse
+                </router-link>
+            </button>
+            <button>
+                <router-link to="{name: 'Cart'}" >
+                  <img src="/img/carro-de-la-compra.png" alt="" class="w-8 h-8">
+                </router-link>
+            </button>
         </ul>
       </li>
     </ul>

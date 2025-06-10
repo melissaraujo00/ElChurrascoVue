@@ -15,7 +15,12 @@ const SpecialtySchema = new mongoose.Schema({
     type: String,
     required: true, 
     trim: true
-  }
+  },
+  type: {
+    type: String,
+    enum: ['Entradas', 'Platos Fuertes', 'Bebidas', 'Menu Infantil'],
+    default: 'Especialidad'
+  },
 });
 
 const Specialty = mongoose.model('Specialty', SpecialtySchema);

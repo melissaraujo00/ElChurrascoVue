@@ -1,32 +1,26 @@
 <template>
-    <section class="relative w-full h-auto border border-gray-300 shadow-md mb-2 overflow-hidden">
-      <div class="relative w-full">
-    
-        <div class="absolute inset-0 bg-gray-950/65"></div>
-        
-     
-        <img 
-          src="../../../public/img/principal.jpg" 
-          alt="Imagen negocio"
-          class="w-full h-64 sm:h-72 md:h-80 lg:h-96 object-cover object-center"
-        >
+  <section class="relative w-full h-auto border border-black shadow-md mb-2 overflow-hidden">
+    <div class="relative w-full">
+      <div class="absolute inset-0 bg-gray-950/70"></div>
+      <img 
+        src="../../../public/img/banner-home.jpg" 
+        alt="Imagen negocio"
+        class="w-full h-60 sm:h-80 md:h-[28rem] lg:h-[34rem] xl:h-[40rem] object-cover object-center"
+      >
+    </div>
+
+    <div class="absolute inset-0 flex flex-col justify-center items-center p-4 sm:p-6 md:p-8">
+      <h2 class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-white font-extrabold text-center mb-6 sm:mb-6 md:mb-8 max-w-4xl mx-auto leading-tight drop-shadow-lg">
+        RESTAURANTE EL CHURRASCO
+      </h2>
+      <div class="w-full max-w-lg sm:max-w-lg md:max-w-xl lg:max-w-3xl mx-auto">
+        <p class="text-lg sm:text-2xl md:text-3xl lg:text-4xl text-white text-center mb-6 sm:mb-8 md:mb-10 leading-relaxed drop-shadow">
+          Sabor, frescura y momentos inolvidables
+        </p>
       </div>
-  
-     
-      <div class="absolute inset-0 flex flex-col justify-center items-center p-4 sm:p-6 md:p-8">
-     
-        <h2 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl  text-white font-bold text-center mb-5 sm:mb-4 md:mb-6 max-w-4xl mx-auto leading-tight">
-          "Sabor, frescura y momentos inolvidables"
-        </h2>
-  
-        
-        <div class="w-full max-w-lg sm:max-w-lg md:max-w-xl lg:max-w-3xl mx-auto">
-          <p class="text-sm sm:text-base md:text-lg text-white text-center leading-relaxed">
-            Nuestro espacio es fresco, acogedor y rodeado de un ambiente hermoso,
-            <span class="block mx-auto w-4/5">ideal para compartir en familia o con amigos.</span>
-            La combinación de un excelente servicio y un ambiente cálido hará que cada visita sea especial.
-          </p>
-        </div>
-      </div>
-    </section>
-  </template>
+      <button class="bg-white text-black px-6 py-3 mt-4 rounded hover:bg-gray-200 transition-colors duration-200 text-lg sm:text-xl md:text-2xl font-bold shadow-white/50 shadow-md">
+        ¡Unite a la Familia!
+      </button>
+    </div>
+  </section>
+</template>

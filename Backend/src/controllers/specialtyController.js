@@ -17,7 +17,7 @@ export const specialtyCreate = [
   specialtyValidation,
   async (req, res) => {
     try {
-      const { nombre, descripcion } = req.body;
+      const { nombre, descripcion, type } = req.body;
       let imagen = null;
 
       if (req.file) {
@@ -31,7 +31,7 @@ export const specialtyCreate = [
         return res.status(400).json({ message: 'La especialidad ya existe.' });
       }
 
-      const nueva = new Specialty({ nombre, descripcion, imagen });
+      const nueva = new Specialty({ nombre, descripcion, imagen, type });
       await nueva.save();
 
       res.status(201).json({
@@ -64,8 +64,8 @@ export const specialtyUpdate = [
   specialtyValidation,
   async (req, res) => {
     try {
-      const { nombre, descripcion } = req.body;
-      let updateData = { nombre, descripcion };
+      const { nombre, descripcion, type } = req.body;
+      let updateData = { nombre, descripcion, type };
 
       if (req.file) {
         updateData.imagen = `/uploads/${req.file.filename}`;

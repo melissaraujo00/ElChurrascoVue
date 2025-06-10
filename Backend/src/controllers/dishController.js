@@ -9,7 +9,7 @@ export const createDish = [
     authMiddleware,
     async (req, res) => {
     try {
-        const { nombre, precio, descripcion, especialidad, imprescindible } = req.body;
+        const { nombre, precio, descripcion, especialidad, imprescindible, offer } = req.body;
         let imagen = null;
 
         if (req.file) {
@@ -37,7 +37,8 @@ export const createDish = [
           descripcion,
           imagen,
           especialidad,
-          imprescindible: imprescindible || false
+          imprescindible: imprescindible || false,
+          offer: offer || null
         });
 
         const savedDish = await newDish.save();
@@ -76,8 +77,8 @@ export const updateDish = [
     authMiddleware,
     async (req, res) => {
         try {
-            const { nombre, precio, descripcion, especialidad, imprescindible } = req.body;
-            let updateData = { nombre, precio, descripcion, especialidad, imprescindible: imprescindible || false };
+            const { nombre, precio, descripcion, especialidad, imprescindible, offer } = req.body;
+            let updateData = { nombre, precio, descripcion, especialidad, imprescindible: imprescindible || false, offer: offer || null };
             if (req.file) {
                 updateData.imagen = `/uploads/${req.file.filename}`;
             }

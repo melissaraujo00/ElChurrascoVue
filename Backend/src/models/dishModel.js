@@ -28,6 +28,9 @@ const DishSchema = new mongoose.Schema({
   imprescindible: {
     type: Boolean,
     default: false
+  },
+  offer: {
+    type: String
   }
 });
 

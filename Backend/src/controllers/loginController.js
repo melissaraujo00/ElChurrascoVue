@@ -117,9 +117,11 @@ export const inicioSesion = [async (req, res) => {
         const payload = {
             user: {
                 id_user: userFound._id,
+                name: userFound.name,
                 roles: userFound.roles
             }
         };
+        console.log(userFound);
 
 
         jwt.sign(

@@ -13,8 +13,8 @@ const SpecialtySchema = new mongoose.Schema({
   },
   imagen: {
     type: String,
-    required: true, // solo verificamos que exista una ruta
-    trim: true // opcional, para eliminar espacios
+    required: true, 
+    trim: true
   }
 });
 

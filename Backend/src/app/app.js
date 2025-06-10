@@ -4,6 +4,8 @@ import connectDB from '../database/database.js';
 import cookieParser from 'cookie-parser';
 import login from '../router/login.js'; 
 import specialtyRouter from '../router/specialty.js';
+import dishRoutes from '../router/dish.js';
+import orderRoutes from '../router/order.js';
 import cors from "cors";
 
 const app = express();
@@ -19,6 +21,8 @@ app.use(cors({
 
 app.use('/specialty', specialtyRouter); 
 app.use('/login', login);
+app.use('/dishes', dishRoutes);
+app.use('/orders', orderRoutes);
 
 app.get('/', (req, res) => {
   res.send('Bienvenido al Backend del El Churrasco');

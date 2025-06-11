@@ -1,6 +1,7 @@
 <script setup>
 import { ref, reactive, defineProps } from 'vue'
 import axios from 'axios'
+const API_URL = import.meta.env.VITE_API_URL
 
 // Prop para determinar si es login o register
 const props = defineProps({
@@ -75,7 +76,7 @@ const handleSubmit = async () => {
   try {
     if (props.isLogin) {
       const res = await axios.post(
-        'http://localhost:3000/login/signin',
+        ` ${API_URL}0/login/signin`,
         {
           email: form.email,
           password: form.password
@@ -85,7 +86,7 @@ const handleSubmit = async () => {
       alert('Login exitoso')
       console.log(res.data)
     } else {
-      const res = await axios.post('http://localhost:3000/login/register', form)
+      const res = await axios.post(` ${API_URL}0/login/register`, form)
       alert('Registro exitoso')
       console.log(res.data)
     }

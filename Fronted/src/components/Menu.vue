@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from "vue"
+const API_URL = import.meta.env.VITE_API_URL
 
 const dishes = ref([])
 const loading = ref(true)
@@ -37,7 +38,7 @@ const prevPage = () => {
 const getAlldishes = async () => {
     try {
         loading.value = true
-        const res = await fetch("http://localhost:3000/dishes/")
+        const res = await fetch(`${API_URL}/dishes/`)
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`)
         const data = await res.json()
         dishes.value = data
@@ -136,7 +137,7 @@ onMounted(() => {
             <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mt-8">
                 <div v-for="dish in paginatedDishes" :key="dish._id"
                     class="flex flex-col bg-gray-900 text-white rounded-2xl shadow-lg overflow-hidden hover:scale-105 transition-transform duration-300">
-                    <img :src="`http://localhost:3000${dish.imagen}`" :alt="dish.nombre"
+                    <img :src="` ${API_URL}0${dish.imagen}`" :alt="dish.nombre"
                         class="w-full h-52 object-cover" />
                     <div class="flex flex-col p-4 gap-2">
                         <h3 class="text-xl font-bold">{{ dish.nombre }}</h3>

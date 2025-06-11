@@ -1,92 +1,80 @@
 <script setup>
 import { ref } from "vue";
 
-const formNames = ref([
-    { id: 1, name: 'Nombre', for: 'name', type: 'text'},
-    { id: 2, name: 'Fecha', for: 'date', type: 'date'},
-    { id: 3, name: 'Hora', for: 'hour', type: 'time'},
-    { id: 4, name: 'Numero Personas', for: 'people', type: 'number'},
-]);
-
-const information = ref([
-    { id: 1, title: 'Direccion', content: 'Cantón San Matías, Distrito de Ciudad Barrios'},
-    { id: 2, title: 'Telefono', content: '+503 7956 5203'},
-    { id: 3, title: 'Correo Electrónico', content: 'elchurrascosv@outlook.com'}
-])
-
-
 const formValues = ref({
-    name: '',
-    date: '',
-    hour: '',
-    people: ''
+  name: '',
+  people: '',
+  date: '',
+  hour: '',
+  additional: ''
 });
 
 const clearForm = () => {
-    formValues.value = {
-        name: '',
-        date: '',
-        hour: '',
-        people: ''
-    };
+  formValues.value = {
+    name: '',
+    people: '',
+    date: '',
+    hour: '',
+    additional: ''
+  };
 };
 
+const submitForm = () => {
+  clearForm();
+};
 </script>
 
 <template>
-    <div class="relative h-full grid grid-cols-2">
-      <div class="relative w-full col-span-2 h-70 overflow-hidden">
-        <div class="absolute inset-0 bg-gray-950/65"></div>
-        <img class="w-full h-full object-cover object-center" src="/img/bannerReservation.jpg" alt="">
-  
-        <div class="absolute w-full inset-0 flex items-center justify-center">
-          <h2 class="text-xl sm:text-3xl md:text-4xl lg:text-5xl text-white font-bold text-center mb-5 sm:mb-4 md:mb-6 leading-tight">
-            Déjanos ser parte de tus mejores recuerdos
-          </h2>
-        </div>
-      </div>
-  
-      <div class="md:col-span-1 p-5 col-span-2 mt-3 bg-gray-300 flex justify-center items-center">
-          <img 
-              class="w-3/4 h-auto block shadow-lg rounded-md " 
-              src="/img/reservationImg.jpg" 
-              alt="Imagen de reserva"
-          >
-      </div>
-  
-      <div class="p-5 mt-3 bg-gray-300 flex flex-col items-center md:col-span-1 col-span-2">
-        <h2 class="text-3xl font-bold mb-5 text-center">¡Reserva Aquí!</h2>
-        <form @submit.prevent="clearForm" class="w-full max-w-md flex flex-col items-center">
-            <div v-for="formName in formNames" :key="formName.id" class="p-2 m-2 w-full">
-                <label :for="formName.for" class="block text-sm mb-1">{{ formName.name }}</label>
-                <input
-                    v-model="formValues[formName.for]"
-                    :type="formName.type"
-                    :id="formName.for"
-                    :name="formName.for"
-                    class="w-full p-1 bg-white text-black rounded-md text-sm"
-                >
+  <div class="relative w-full col-span-2 overflow-hidden h-[700px]">
+    <img class="w-full h-full object-cover blur-xs" src="/img/bannerReservation.jpg" alt="">
+    <div class="absolute inset-0 bg-gray-950/65"></div>
+
+    <div class="absolute inset-0 flex flex-col items-center justify-center m-3 px-4">
+      <h2 class="text-5xl text-white font-bold mb-8 mt-5 text-center">Haz tú Reservación</h2>
+
+      <div
+        class="p-8 bg-white/20 backdrop-blur-md rounded-xl w-full max-w-[690px] h-auto flex flex-col shadow-xl mx-4 sm:mx-5">
+        <form @submit.prevent="submitForm" class="w-full flex flex-col gap-6">
+          <div>
+            <label for="name" class="block text-white mb-1 font-semibold">Nombre</label>
+            <input v-model="formValues.name" id="name" name="name" type="text" placeholder="Lupe"
+              class="w-full p-3 rounded-md text-black text-sm bg-white" required />
+          </div>
+
+          <div>
+            <label for="people" class="block text-white mb-1 font-semibold">Número de personas</label>
+            <input v-model="formValues.people" id="people" name="people" type="number" min="1" placeholder="7"
+              class="w-full p-3 rounded-md text-black text-sm bg-white" required />
+          </div>
+
+          <!-- Fecha y hora: flexibles y responsivos -->
+          <div class="flex flex-col sm:flex-row gap-4">
+            <div class="flex-1 min-w-0">
+              <label for="date" class="block text-white mb-1 font-semibold">Fecha</label>
+              <input v-model="formValues.date" id="date" name="date" type="date"
+                class="w-full p-3 rounded-md text-black text-sm bg-white" required />
             </div>
-            <button
-                type="submit"
-                class="w-1/3 max-w-xs py-1 bg-red-600 text-white rounded-md hover:bg-amber-400 transition duration-300 text-sm"
-            >
-                Enviar
-            </button>
+            <div class="flex-1 min-w-0">
+              <label for="hour" class="block text-white mb-1 font-semibold">Hora</label>
+              <input v-model="formValues.hour" id="hour" name="hour" type="time"
+                class="w-full p-3 rounded-md text-black text-sm bg-white" required />
+            </div>
+          </div>
+
+          <div>
+            <label for="additional" class="block text-white mb-1 font-semibold">Datos Adicionales (Opcional)</label>
+            <textarea v-model="formValues.additional" id="additional" name="additional"
+              placeholder="Enter your question or message" rows="4"
+              class="w-full p-3 rounded-md text-black text-sm resize-none bg-white"></textarea>
+          </div>
+
+          <button type="submit"
+            class="w-full py-2 bg-black text-white rounded-md hover:bg-amber-400 transition duration-300 text-lg font-semibold">
+            Reservar
+          </button>
         </form>
-      </div>
-  
-      <div class="p-4 m-1 md:col-span-1 col-span-2">
-        <ul class="list-none" v-for="infor in information" :key="infor.id">
-          <li class="m-2 p-2">
-            <p class="text-lg md:text-xl font-bold">{{ infor.title }}</p>
-            <p class="text-sm md:text-base">{{ infor.content }}</p>
-          </li>
-        </ul>
-      </div>
-  
-      <div class="w-full h-[300px] mt-6 pr-3 md:col-span-1 col-span-2">
-        <iframe class="w-full h-full" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d30998.35482681424!2d-88.29983382568355!3d13.791267100000015!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f64db001f8596fb%3A0x53f539e7e88bea84!2sEl%20Churrasco!5e0!3m2!1ses-419!2ssv!4v1738968992720!5m2!1ses-419!2ssv" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+
       </div>
     </div>
+  </div>
 </template>

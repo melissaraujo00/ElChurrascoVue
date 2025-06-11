@@ -1,4 +1,5 @@
 <script setup>
+import axios from 'axios';
 import { ref, onMounted, computed, onBeforeUnmount, nextTick } from 'vue';
 
 const productos = ref([]);
@@ -16,9 +17,8 @@ const updateCardWidth = () => {
 
 const fetchProductos = async () => {
   try {
-    const res = await fetch('http://localhost:3000/dishes/');
-    const data = await res.json();
-    productos.value = data.filter(p => p.imprescindible === true);
+    const res = await axios('http://localhost:3000/dishes/');
+    productos.value = res.data.filter(p => p.imprescindible === true);
     await nextTick();
     updateCardWidth();
   } catch (error) {

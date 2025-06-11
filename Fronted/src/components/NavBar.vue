@@ -27,12 +27,12 @@ const paginas = ref([
               </router-link>
             </li>
             <button class="bg-white text-black px-4 py-2 rounded hover:bg-gray-200">
-                <router-link to="{name: 'Register'}" class="transition-colors duration-200">
+                <router-link :to="{name: 'Register'}" class="transition-colors duration-200">
                   Registrarse
                 </router-link>
             </button>
             <button>
-                <router-link to="{name: 'Cart'}" >
+                <router-link :to="{name: 'Cart'}" >
                   <img src="/img/carro-de-la-compra.png" alt="" class="w-8 h-8">
                 </router-link>
             </button>

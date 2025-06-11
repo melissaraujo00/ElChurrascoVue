@@ -2,14 +2,18 @@ import { createRouter, createMemoryHistory } from "vue-router";
 import Home from '../components/Home.vue'
 import Menu from '../components/Menu.vue';
 import Reserve from '../components/Reserve.vue';
-import Events from '../components/Events.vue'
+import Events from '../components/Events.vue';
+import Register from '../components/Register.vue';
+import Login from '../components/Login.vue';
 
 
 const routes = [
-    {path: '/', component: Home, name: 'Home'}, 
-    {path: '/menu', component: Menu, name: 'Menu'},
+    { path: '/', component: Home, name: 'Home'}, 
+    { path: '/menu', component: Menu, name: 'Menu'},
     { path: '/reserve', component: Reserve,name: 'Reserve' },
-    { path: '/events', component: Events, name: 'Events' }
+    { path: '/events', component: Events, name: 'Events' },
+    { path: 'Register', component: Register, name: 'Register' },
+    { path: '/login', component: Login, name: 'Login' },
 ]
 
 const router = createRouter({

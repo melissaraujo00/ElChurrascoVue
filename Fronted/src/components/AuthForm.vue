@@ -7,6 +7,7 @@ const props = defineProps({
   isLogin: Boolean
 })
 
+// Datos del formulario
 const form = reactive({
   name: '',
   lastName: '',
@@ -16,13 +17,71 @@ const form = reactive({
   password: ''
 })
 
+// Errores por campo
+const formErrors = reactive({
+  name: '',
+  lastName: '',
+  user: '',
+  email: '',
+  phone: '',
+  password: ''
+})
+
+// Validar campos
+const validateForm = () => {
+  Object.keys(formErrors).forEach((key) => formErrors[key] = '')
+  let isValid = true
+
+  if (!form.email.includes('@')) {
+    formErrors.email = 'El correo no es válido'
+    isValid = false
+  }
+
+  if (form.password.length < 8) {
+    formErrors.password = 'La contraseña debe tener al menos 8 caracteres'
+    isValid = false
+  }
+
+  if (!props.isLogin) {
+    if (!form.name.trim()) {
+      formErrors.name = 'El nombre es obligatorio'
+      isValid = false
+    }
+
+    if (!form.lastName.trim()) {
+      formErrors.lastName = 'El apellido es obligatorio'
+      isValid = false
+    }
+
+    if (!form.user.trim()) {
+      formErrors.user = 'El nombre de usuario es obligatorio'
+      isValid = false
+    }
+
+    if (!/^[0-9]{8,}$/.test(form.phone)) {
+      formErrors.phone = 'El teléfono debe tener al menos 8 dígitos'
+      isValid = false
+    }
+  }
+
+  return isValid
+}
+
+// Enviar datos
 const handleSubmit = async () => {
+  const isValid = validateForm()
+  if (!isValid) return
+
   try {
     if (props.isLogin) {
-      const res = await axios.post('http://localhost:3000/login/signin', {
-        email: form.email,
-        password: form.password
-      })
+      const res = await axios.post(
+        'http://localhost:3000/login/signin',
+        {
+          email: form.email,
+          password: form.password
+        },
+        { withCredentials: true }
+      )
       alert('Login exitoso')
       console.log(res.data)
     } else {
@@ -35,6 +94,7 @@ const handleSubmit = async () => {
   }
 }
 </script>
+
 <template>
   <div class="flex items-center justify-center min-h-screen bg-gradient-to-t from-neutral-900 to-red-800">
     <div class="flex flex-col md:flex-row bg-white/40 rounded-lg shadow-lg overflow-hidden shadow-amber-50">
@@ -49,42 +109,47 @@ const handleSubmit = async () => {
           <form @submit.prevent="handleSubmit" class="space-y-4">
             
             <!-- Solo en modo registro -->
-            <div v-if="!isLogin" class="grid grid-cols-1 ">
+            <div v-if="!isLogin" class="grid grid-cols-1 gap-2">
               <div>
                 <label class="text-sm font-medium text-gray-950">Nombre</label>
-                <input v-model="form.name" type="text" required
+                <input v-model="form.name" type="text"
                   class="block w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-400 bg-white" />
-                  <label class="text-sm font-medium text-gray-950">Apellido</label>
-                <input v-model="form.lastName" type="text" required
-                  class="block w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-400 bg-white" />
+                <p v-if="formErrors.name" class="text-red-600 text-sm">{{ formErrors.name }}</p>
               </div>
               <div>
-                
+                <label class="text-sm font-medium text-gray-950">Apellido</label>
+                <input v-model="form.lastName" type="text"
+                  class="block w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-400 bg-white" />
+                <p v-if="formErrors.lastName" class="text-red-600 text-sm">{{ formErrors.lastName }}</p>
               </div>
             </div>
 
             <div v-if="!isLogin">
               <label class="text-sm font-medium text-gray-950">Usuario</label>
-              <input v-model="form.user" type="text" required
+              <input v-model="form.user" type="text"
                 class="block w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-400 bg-white" />
+              <p v-if="formErrors.user" class="text-red-600 text-sm">{{ formErrors.user }}</p>
             </div>
 
             <div>
               <label class="text-sm font-medium text-gray-950">Correo</label>
-              <input v-model="form.email" type="email" required
+              <input v-model="form.email" type="email"
                 class="block w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-400 bg-white" />
+              <p v-if="formErrors.email" class="text-red-600 text-sm">{{ formErrors.email }}</p>
             </div>
 
             <div v-if="!isLogin">
               <label class="text-sm font-medium text-gray-950">Teléfono</label>
-              <input v-model="form.phone" type="text" required minlength="8"
+              <input v-model="form.phone" type="text"
                 class="block w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-400 bg-white" />
+              <p v-if="formErrors.phone" class="text-red-600 text-sm">{{ formErrors.phone }}</p>
             </div>
 
             <div>
               <label class="text-sm font-medium text-gray-950">Contraseña</label>
-              <input v-model="form.password" type="password" required minlength="8"
+              <input v-model="form.password" type="password"
                 class="block w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-400 bg-white" />
+              <p v-if="formErrors.password" class="text-red-600 text-sm">{{ formErrors.password }}</p>
             </div>
 
             <button
@@ -118,7 +183,3 @@ const handleSubmit = async () => {
     </div>
   </div>
 </template>
-
-
-
-

@@ -26,7 +26,12 @@ app.use(express.static(path.join(__dirname, '../../public')));
 app.use(cookieParser());
 app.use(express.json());
 app.use(morgan('dev'));
-app.use(cors());
+app.use(cors(
+  {
+    origin: 'http://localhost:5173', // o tu frontend en producción
+  credentials: true
+  }
+));
 
 app.use('/specialty', specialtyRouter); 
 app.use('/login', login);

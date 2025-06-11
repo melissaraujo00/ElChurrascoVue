@@ -26,9 +26,9 @@ const paginas = ref([
                 {{ pagina.page }}
               </router-link>
             </li>
-            <button class="bg-white text-black px-4 py-2 rounded hover:bg-gray-200">
-                <router-link :to="{name: 'Register'}" class="transition-colors duration-200">
-                  Registrarse
+            <button >
+                <router-link :to="{name: 'Login'}" class="transition-colors duration-200">
+                  <img src="/img/cuenta.png" alt="" class="w-12 h-12">
                 </router-link>
             </button>
             <button>

@@ -47,7 +47,11 @@ const clearForm = () => {
       </div>
   
       <div class="md:col-span-1 p-5 col-span-2 mt-3 bg-gray-300 flex justify-center items-center">
-          
+          <img 
+              class="w-3/4 h-auto block shadow-lg rounded-md " 
+              src="" 
+              alt="Imagen de reserva"
+          >
       </div>
   
       <div class="p-5 mt-3 bg-gray-300 flex flex-col items-center md:col-span-1 col-span-2">

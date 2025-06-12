@@ -46,6 +46,7 @@ function renderImage(path) {
     :editItem="editSpecialty"
     :searchKeys="['nombre', 'descripcion', 'type']"
     :renderImage="renderImage"
+    :showDelete="true"
     @open-modal="openModal"
   />
 

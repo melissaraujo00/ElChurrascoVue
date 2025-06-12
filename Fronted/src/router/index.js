@@ -8,6 +8,7 @@ import Login from '../components/Login.vue';
 import Cart from '../components/Cart.vue';
 import Users from '@/components/AdminComponets/Users.vue'
 import CrudSpecialities from "@/components/AdminComponets/Specialties/CrudSpecialities.vue"; 
+import CrudReservations from "@/components/AdminComponets/Reservations/CrudReservations.vue";
 
 
 const routes = [
@@ -22,8 +23,7 @@ const routes = [
     { path: '/cart', name: 'Cart'},
     { path: '/cart', component:Cart ,name: 'Cart'},
     { path: '/CrudSpecialities', component: CrudSpecialities, name: 'CrudSpecialities'},
-    
-    
+    { path: '/CrudReservations', component: CrudReservations, name: 'CrudReservations'}
 ]
 
 const router = createRouter({

@@ -48,7 +48,7 @@ const prevPage = () => {
 // Verificar si el usuario está autenticado
 const checkAuthStatus = async () => {
     try {
-        const response = await axios.get('http://localhost:3000/login/profile', {
+        const response = await axios.get('${API_URL}/login/profile', {
             withCredentials: true
         })
         

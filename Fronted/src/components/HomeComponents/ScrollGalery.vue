@@ -134,6 +134,8 @@ const scrollToIndex = () => {
         Menú
       </router-link>
     </div>
+  <br>
+    <div class="w-full h-px bg-white mb-6"></div>
   </div>
 </template>
 

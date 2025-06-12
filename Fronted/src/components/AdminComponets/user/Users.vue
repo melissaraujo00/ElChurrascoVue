@@ -24,6 +24,8 @@ async function cargarUsuarios() {
     try {
       const data = JSON.parse(text)
       usuarios.value = data
+      console.log(usuarios.value);
+      
     } catch (err) {
       console.error('No es JSON válido:', err)
     }

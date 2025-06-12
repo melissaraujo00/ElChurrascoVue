@@ -113,60 +113,58 @@ const scrollToCard = () => {
         <div class="w-[90%] h-px bg-white my-6 mx-auto"></div>
 
         <!-- Sección del carrusel -->
-        <section class="p-4">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="text-2xl font-bold text-center w-full">Platos en oferta</h3>
-            </div>
+        <section class="p-4 flex flex-col items-center">
+          <div class="flex items-center justify-between mb-6 w-full max-w-5xl mx-auto">
+            <h3 class="text-2xl font-bold text-center w-full">Platos en oferta</h3>
+          </div>
 
-            <!-- Contenedor del carrusel -->
-            <div class="relative overflow-hidden">
-                <div 
-                    ref="carouselContainer"
-                    class="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth"
-                    style="scrollbar-width: none; -ms-overflow-style: none;"
-                >
-                    <div 
-                        v-for="dish in offerDishes" 
-                        :key="dish.id" 
-                        class="flex-shrink-0 w-80 bg-white text-black rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
-                    >
-                        <div class="relative h-48 overflow-hidden">
-                            <img 
-                                :src="`${API_URL}${dish.imagen}`"
-                                :alt="dish.nombre"
-                                class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                                @error="$event.target.src = '/img/default-dish.jpg'"
-                            />
-                            
-                            <!-- Badge de oferta -->
-                            <div class="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-sm font-bold">
-                                {{ dish.offer }}
-                            </div>
-                        </div>
-                        
-                        <div class="p-4">
-                            <h4 class="text-xl font-semibold mb-2 text-gray-800">{{ dish.nombre }}</h4>
-                            <p class="text-gray-600 mb-3 text-sm line-clamp-2">{{ dish.descripcion }}</p>
-                        </div>
-                    </div>
+          <!-- Contenedor del carrusel -->
+          <div class="relative overflow-hidden w-full max-w-5xl mx-auto">
+            <div 
+              ref="carouselContainer"
+              class="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth"
+              style="scrollbar-width: none; -ms-overflow-style: none;"
+            >
+              <div 
+                v-for="dish in offerDishes" 
+                :key="dish.id" 
+                class="flex-shrink-0 w-80 bg-white text-black rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
+              >
+                <div class="relative h-48 overflow-hidden">
+                  <img 
+                    :src="`${API_URL}${dish.imagen}`"
+                    :alt="dish.nombre"
+                    class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    @error="$event.target.src = '/img/default-dish.jpg'"
+                  />
+                  <!-- Badge de oferta -->
+                  <div class="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-sm font-bold">
+                    {{ dish.offer }}
+                  </div>
                 </div>
+                <div class="p-4">
+                  <h4 class="text-xl font-semibold mb-2 text-gray-800">{{ dish.nombre }}</h4>
+                  <p class="text-gray-600 mb-3 text-sm line-clamp-2">{{ dish.descripcion }}</p>
+                </div>
+              </div>
             </div>
+          </div>
 
-            <!-- Indicadores de posición -->
-            <div class="flex justify-center mt-6 gap-2">
-                <div 
-                    v-for="(dish, index) in offerDishes" 
-                    :key="index"
-                    @click="currentIndex = index; scrollToCard()"
-                    class="w-2 h-2 rounded-full cursor-pointer transition-all duration-200"
-                    :class="index === currentIndex ? 'bg-red-500' : 'bg-gray-400 hover:bg-gray-300'"
-                ></div>
-            </div>
+          <!-- Indicadores de posición -->
+          <div class="flex justify-center mt-6 gap-2">
+            <div 
+              v-for="(dish, index) in offerDishes" 
+              :key="index"
+              @click="currentIndex = index; scrollToCard()"
+              class="w-2 h-2 rounded-full cursor-pointer transition-all duration-200"
+              :class="index === currentIndex ? 'bg-red-500' : 'bg-gray-400 hover:bg-gray-300'"
+            ></div>
+          </div>
 
-            <!-- Mensaje si no hay ofertas -->
-            <div v-if="offerDishes.length === 0" class="text-center py-8">
-                <p class="text-gray-400">No hay platos en oferta disponibles en este momento.</p>
-            </div>
+          <!-- Mensaje si no hay ofertas -->
+          <div v-if="offerDishes.length === 0" class="text-center py-8">
+            <p class="text-gray-400">No hay platos en oferta disponibles en este momento.</p>
+          </div>
         </section>
 
         <div class="w-[90%] h-px bg-white my-6 mx-auto"></div>

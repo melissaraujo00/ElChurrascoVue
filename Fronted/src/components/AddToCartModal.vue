@@ -45,7 +45,7 @@ const totalPrice = computed(() => {
 <template>
     <!-- Modal Backdrop -->
     <div v-if="show" @click="closeModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        class="fixed inset-0 bg-black/80 bg-opacity-50 flex items-center justify-center z-50 p-4">
         
         <!-- Modal Content -->
         <div @click.stop
@@ -53,7 +53,7 @@ const totalPrice = computed(() => {
             
             <!-- Header -->
             <div class="relative">
-                <img v-if="dish" :src="`${API_URL}{dish.imagen}`" :alt="dish.nombre"
+                <img v-if="dish" :src="`${API_URL}${dish.imagen}`" :alt="dish.nombre"
                     class="w-full h-48 object-cover rounded-t-2xl" />
                 
                 <!-- Close Button -->
@@ -70,7 +70,7 @@ const totalPrice = computed(() => {
                 <!-- Title and Price -->
                 <div class="mb-4">
                     <h2 class="text-2xl font-bold mb-2">{{ dish?.nombre }}</h2>
-                    <p class="text-2xl font-semibold text-green-400">${{ dish?.precio?.toFixed(2) || '0.00' }}</p>
+                    <p class="text-2xl font-semibold text-white">${{ dish?.precio?.toFixed(2) || '0.00' }}</p>
                 </div>
 
 
@@ -111,13 +111,13 @@ const totalPrice = computed(() => {
                 <!-- Action Buttons -->
                 <div class="flex gap-3">
                     <button @click="closeModal"
-                        class="flex-1 px-4 py-3 border border-gray-600 hover:border-gray-500 text-white rounded-lg font-medium transition-colors">
+                        class="flex-1 px-4 py-3 border bg-red-500 hover:border-gray-500 text-white rounded-lg font-medium transition-colors">
                         Cancelar
                     </button>
                     
                     <!-- Add to Cart Button (cuando está autenticado) -->
                     <button v-if="isAuthenticated" @click="addToCart"
-                        class="flex-1 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center">
+                        class="flex-1 px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5-6m0 0h11.5M17 13v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6" />
                         </svg>

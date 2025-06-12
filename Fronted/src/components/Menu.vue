@@ -1,8 +1,15 @@
 <script setup>
 import { ref, onMounted, computed } from "vue"
+import { useRouter } from "vue-router"
 import AddToCartModal from '@/components/AddToCartModal.vue'
+import { useAuth } from '@/composables/useAuth.js' // Importar el composable
 import axios from 'axios'
+
 const API_URL = import.meta.env.VITE_API_URL
+const router = useRouter()
+
+// Usar el composable de autenticación
+const { isAuthenticated, user, checkAuthStatus } = useAuth()
 
 const dishes = ref([])
 const loading = ref(true)
@@ -20,10 +27,6 @@ const quantity = ref(1)
 const showNotification = ref(false)
 const notificationMessage = ref('')
 const notificationType = ref('success') // 'success' o 'error'
-
-// Auth state
-const isAuthenticated = ref(false)
-const user = ref(null)
 
 const filteredDishes = computed(() => {
     if (activeFilter.value === "todos") return dishes.value
@@ -45,24 +48,6 @@ const prevPage = () => {
     if (currentPage.value > 1) currentPage.value--
 }
 
-// Verificar si el usuario está autenticado
-const checkAuthStatus = async () => {
-    try {
-        const response = await axios.get('${API_URL}/login/profile', {
-            withCredentials: true
-        })
-        
-        if (response.data) {
-            isAuthenticated.value = true
-            user.value = response.data
-        }
-    } catch (error) {
-        console.log('Usuario no autenticado:', error)
-        isAuthenticated.value = false
-        user.value = null
-    }
-}
-
 const getAlldishes = async () => {
     try {
         loading.value = true
@@ -81,7 +66,6 @@ const getAlldishes = async () => {
     }
 }
 
-// Modal functions - Ahora siempre abre el modal
 const openModal = (dish) => {
     selectedDish.value = dish
     quantity.value = 1
@@ -157,22 +141,21 @@ const showSuccessNotification = (message, type = 'success') => {
     }, 3000)
 }
 
+// Función corregida para redireccionar
 const redirectToLogin = () => {
-    // Aquí puedes usar router.push si tienes vue-router configurado
-    // router.push('/login')
-    window.location.href = '/login' // O la ruta que uses para login
+    router.push('/register')
 }
 
 onMounted(async () => {
-    await checkAuthStatus()
+    await checkAuthStatus() // Usar el método del composable
     await getAlldishes()
 })
 </script>
 
 <template>
-    <div class="flex flex-col text-white">
+    <div class="flex flex-col text-white ">
         <!-- Header -->
-        <section class="flex flex-col md:flex-row w-full text-white">
+        <section class="flex flex-col md:flex-row w-full text-white bg-black/10">
             <div class="flex items-center justify-start w-full md:w-1/2 p-6 ml-20%">
                 <h1 class="text-2xl sm:text-3xl md:text-5xl font-bold tracking-wider leading-snug">
                     Echa un vistazo a nuestro menú gourmet
@@ -187,31 +170,6 @@ onMounted(async () => {
         </section>
 
         <div class="w-[90%] h-px bg-white my-6 mx-auto"></div>
-
-        <!-- Auth Status Banner (opcional) -->
-        <div v-if="!isAuthenticated" class="bg-blue-600/20 border border-blue-500 text-blue-200 px-4 py-3 rounded-lg mx-4 mb-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                    </svg>
-                    <span>Puedes explorar nuestro menú. Para agregar productos al carrito, inicia sesión</span>
-                </div>
-                <button @click="redirectToLogin" class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm font-medium transition-colors">
-                    Iniciar Sesión
-                </button>
-            </div>
-        </div>
-
-        <!-- User Welcome (si está logueado) -->
-        <div v-if="isAuthenticated && user" class="bg-green-600/20 border border-green-500 text-green-200 px-4 py-3 rounded-lg mx-4 mb-4">
-            <div class="flex items-center">
-                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-                </svg>
-                <span>¡Bienvenido, {{ user.name }}! Ya puedes agregar productos al carrito.</span>
-            </div>
-        </div>
 
         <!-- Filtros -->
         <section>
@@ -326,7 +284,7 @@ onMounted(async () => {
             </div>
         </section>
 
-        <!-- Modal - Ahora pasa isAuthenticated como prop -->
+        <!-- Modal -->
         <AddToCartModal 
             :show="showModal" 
             :dish="selectedDish" 

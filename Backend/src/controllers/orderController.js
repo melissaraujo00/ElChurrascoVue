@@ -15,7 +15,7 @@ export const createOrder = [
 
     // Validar que el carrito no esté vacío
     if (!carrito || carrito.length === 0) {
-      return res.status(400).json({ error: 'El carrito no puede estar vacío' });
+      return res.status(400).json({ error: 'El carrito no puede estar vacíooo' });
     }
 
     // Validar que los platos existen y agregar precios actuales desde la BD

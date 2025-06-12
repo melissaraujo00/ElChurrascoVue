@@ -1,7 +1,10 @@
 <script setup>
 import { ref, reactive, defineProps } from 'vue'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
+
 const API_URL = import.meta.env.VITE_API_URL
+const router = useRouter()
 
 // Prop para determinar si es login o register
 const props = defineProps({
@@ -28,9 +31,13 @@ const formErrors = reactive({
   password: ''
 })
 
+// Error general
+const generalError = ref('')
+
 // Validar campos
 const validateForm = () => {
   Object.keys(formErrors).forEach((key) => formErrors[key] = '')
+  generalError.value = ''
   let isValid = true
 
   if (!form.email.includes('@')) {
@@ -83,15 +90,20 @@ const handleSubmit = async () => {
         },
         { withCredentials: true }
       )
-      alert('Login exitoso')
-      console.log(res.data)
+      // Guardar token si está presente
+      const token = res.data.token
+      if (token) localStorage.setItem('token', token)
+
+      await router.push({ name: 'Menu' })
     } else {
       const res = await axios.post(`${API_URL}/login/register`, form)
-      alert('Registro exitoso')
-      console.log(res.data)
+      const token = res.data.token
+      if (token) localStorage.setItem('token', token)
+
+      await router.push({ name: 'Menu' })
     }
   } catch (err) {
-    alert('Error: ' + (err.response?.data?.message || err.message))
+    generalError.value = err.response?.data?.message || 'Ocurrió un error inesperado'
   }
 }
 </script>
@@ -152,6 +164,9 @@ const handleSubmit = async () => {
                 class="block w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-400 bg-white" />
               <p v-if="formErrors.password" class="text-red-600 text-sm">{{ formErrors.password }}</p>
             </div>
+
+            <!-- Mostrar error general si existe -->
+            <p v-if="generalError" class="text-sm text-red-600 text-center">{{ generalError }}</p>
 
             <button
               type="submit"

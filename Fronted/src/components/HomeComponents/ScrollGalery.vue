@@ -99,7 +99,7 @@ const scrollToIndex = () => {
                 class="w-full h-40 sm:h-44 md:h-48 object-cover mb-4 rounded"
               />
             </div>
-            <h2 class="text-lg md:text-xl font-medium ml-3">{{ item.nombre }}</h2>
+            <h2 class="text-lg md:text-xl font-medium">{{ item.nombre }}</h2>
             <p>{{ item.descripcion }}</p>
           </div>
         </div>

@@ -97,14 +97,14 @@ const handleSubmit = async () => {
     )
       const token = res.data.token
       if (token) authStore.login(token) // ✅ GUARDADO REACTIVO
-      await router.push({ name: 'Menu' })
+      await router.push({ name: 'Home' })
     } else {
       // Para registro, mantener la lógica original pero actualizar el estado después
       const res = await axios.post(`${API_URL}/login/register`, form)
       const token = res.data.token
       if (token) authStore.login(token) // ✅ GUARDADO REACTIVO
 
-      await router.push({ name: 'Menu' })
+      await router.push({ name: 'Home' })
     }
   } catch (err) {
     generalError.value = err.response?.data?.message || 'Ocurrió un error inesperado'

@@ -31,7 +31,7 @@ const loginSchema = new mongoose.Schema({
         min: 8,
     },
     roles: {
-        type: [String], 
+        type: String, 
         enum: ['user', 'admin'], 
         default: 'user'
     }

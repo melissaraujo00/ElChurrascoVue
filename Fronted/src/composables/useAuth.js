@@ -17,6 +17,7 @@ export function useAuth() {
     try {
       const response = await fetch(`${API_URL}/login/profile`, {
         credentials: 'include'
+        
       })
       
       if (response.ok) {

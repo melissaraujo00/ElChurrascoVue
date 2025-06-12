@@ -1,17 +1,19 @@
 <script setup>
-import { ref, reactive, defineProps } from 'vue'
+import { ref, reactive, defineProps, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 import { useAuthStore } from '@/stores/auth'
 import axios from 'axios'
 
+// URL de API
 const API_URL = import.meta.env.VITE_API_URL
-const router = useRouter()
 
-// Usar el composable de autenticación
+// Router y Auth
+const router = useRouter()
+const authStore = useAuthStore()
 const { login, checkAuthStatus } = useAuth()
 
-// Prop para determinar si es login o register
+// Prop para modo login/registro
 const props = defineProps({
   isLogin: Boolean
 })
@@ -26,7 +28,7 @@ const form = reactive({
   password: ''
 })
 
-// Errores por campo
+// Errores del formulario
 const formErrors = reactive({
   name: '',
   lastName: '',
@@ -39,9 +41,9 @@ const formErrors = reactive({
 // Error general
 const generalError = ref('')
 
-// Validar campos
+// Validación de formulario
 const validateForm = () => {
-  Object.keys(formErrors).forEach((key) => formErrors[key] = '')
+  Object.keys(formErrors).forEach(key => formErrors[key] = '')
   generalError.value = ''
   let isValid = true
 
@@ -71,7 +73,7 @@ const validateForm = () => {
       isValid = false
     }
 
-    if (!/^[0-9]{8,}$/.test(form.phone)) {
+    if (!/^\d{8,}$/.test(form.phone)) {
       formErrors.phone = 'El teléfono debe tener al menos 8 dígitos'
       isValid = false
     }
@@ -80,32 +82,32 @@ const validateForm = () => {
   return isValid
 }
 
-// Enviar datos
+// Redirigir si ya está autenticado
+onMounted(async () => {
+  const isAuth = await checkAuthStatus()
+  if (isAuth) {
+    router.push({ name: 'Home' })
+  }
+})
+
+// Envío del formulario
 const handleSubmit = async () => {
-  const isValid = validateForm()
-  if (!isValid) return
+  if (!validateForm()) return
 
   try {
-    if (props.isLogin) {
-      const res = await axios.post(
-        `${API_URL}/login/signin`,
-        {
-          email: form.email,
-          password: form.password
-        },
-        { withCredentials: true }
-    )
-      const token = res.data.token
-      if (token) authStore.login(token) // ✅ GUARDADO REACTIVO
-      await router.push({ name: 'Home' })
-    } else {
-      // Para registro, mantener la lógica original pero actualizar el estado después
-      const res = await axios.post(`${API_URL}/login/register`, form)
-      const token = res.data.token
-      if (token) authStore.login(token) // ✅ GUARDADO REACTIVO
+    const endpoint = props.isLogin ? 'signin' : 'register'
+    const payload = props.isLogin
+      ? { email: form.email, password: form.password }
+      : { ...form }
 
-      await router.push({ name: 'Home' })
-    }
+    const res = await axios.post(`${API_URL}/login/${endpoint}`, payload, {
+      withCredentials: true
+    })
+
+    const token = res.data.token
+    if (token) login(token) // <-- usar login del composable
+
+    await router.push({ name: 'Home' })
   } catch (err) {
     generalError.value = err.response?.data?.message || 'Ocurrió un error inesperado'
   }

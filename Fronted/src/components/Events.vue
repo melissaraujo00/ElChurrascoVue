@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from "vue"
 import { useRouter } from "vue-router"
 import AddToCartModal from '@/components/AddToCartModal.vue'
 import axios from 'axios'
+const API_URL = import.meta.env.VITE_API_URL
 
 const router = useRouter()
 const dishes = ref([])
@@ -19,7 +20,7 @@ const showModal = ref(false)
 
 const getDishes = async () => {
     try {
-        const res = await fetch("http://localhost:3000/dishes/")
+        const res = await fetch(`${API_URL}/dishes/`)
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`)
         const data = await res.json()
         dishes.value = data
@@ -31,7 +32,7 @@ const getDishes = async () => {
 
 const getGallery = async () => {
     try {
-        const res = await fetch("http://localhost:3000/gallery/")
+        const res = await fetch(`${API_URL}/gallery/`)
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`)
         const data = await res.json()
         gallery.value = data
@@ -131,7 +132,7 @@ const scrollToCard = () => {
                     >
                         <div class="relative h-48 overflow-hidden">
                             <img 
-                                :src="`http://localhost:3000${dish.imagen}`"
+                                :src="`${API_URL}${dish.imagen}`"
                                 :alt="dish.nombre"
                                 class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                                 @error="$event.target.src = '/img/default-dish.jpg'"
@@ -195,7 +196,7 @@ const scrollToCard = () => {
                     <!-- Imagen con aspecto cuadrado -->
                     <div class="aspect-square overflow-hidden">
                         <img 
-                            :src="`http://localhost:3000${image.imagen}`"
+                            :src="`${API_URL}${image.imagen}`"
                             :alt="image.title"
                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             @error="$event.target.src = '/img/default-gallery.jpg'"

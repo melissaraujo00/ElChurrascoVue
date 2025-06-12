@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
+const API_URL = import.meta.env.VITE_API_URL
 
 const cartItems = ref([])
 const user = ref(null)
@@ -25,7 +26,7 @@ const loadCart = () => {
 
 const checkAuthStatus = async () => {
     try {
-        const response = await axios.get('http://localhost:3000/login/profile', {
+        const response = await axios.get(`${API_URL}/login/profile`, {
             withCredentials: true
         })
 
@@ -110,7 +111,7 @@ const procesarCompra = async () => {
         console.log('Enviando pedido:', pedidoData)
 
         // Enviar la petición POST al servidor
-        const response = await axios.post('http://localhost:3000/orders/', pedidoData, {
+        const response = await axios.post(`${API_URL}/orders/`, pedidoData, {
             withCredentials: true,
             headers: {
                 'Content-Type': 'application/json'
@@ -159,7 +160,7 @@ onMounted(async () => {
             <div v-for="item in cartItems" :key="item.id"
                 class="bg-gray-100/20 rounded-lg p-4 flex justify-between items-center">
                 <div class="flex items-center space-x-4">
-                    <img :src="`http://localhost:3000${item.imagen}`" alt="Producto"
+                    <img :src="`${API_URL}${item.imagen}`" alt="Producto"
                         class="w-20 h-20 object-cover rounded-md">
                     <div>
                         <h2 class="text-lg font-semibold">{{ item.nombre }}</h2>

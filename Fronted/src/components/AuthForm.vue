@@ -1,6 +1,7 @@
 <script setup>
 import { ref, reactive, defineProps } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import axios from 'axios'
 
 const API_URL = import.meta.env.VITE_API_URL
@@ -89,17 +90,14 @@ const handleSubmit = async () => {
           password: form.password
         },
         { withCredentials: true }
-      )
-      // Guardar token si está presente
+    )
       const token = res.data.token
-      if (token) localStorage.setItem('token', token)
-
+      if (token) authStore.login(token) // ✅ GUARDADO REACTIVO
       await router.push({ name: 'Menu' })
     } else {
       const res = await axios.post(`${API_URL}/login/register`, form)
       const token = res.data.token
-      if (token) localStorage.setItem('token', token)
-
+      if (token) authStore.login(token) // ✅ GUARDADO REACTIVO
       await router.push({ name: 'Menu' })
     }
   } catch (err) {

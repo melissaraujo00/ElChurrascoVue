@@ -18,7 +18,7 @@ const updateCardWidth = () => {
 
 const fetchProductos = async () => {
   try {
-    const res = await axios(` ${API_URL}0/dishes/`);
+    const res = await axios(`${API_URL}/dishes/`);
     productos.value = res.data.filter(p => p.imprescindible === true);
     await nextTick();
     updateCardWidth();

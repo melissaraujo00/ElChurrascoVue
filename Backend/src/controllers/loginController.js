@@ -67,7 +67,7 @@ export const resgistrarUsuario = [validateLogin, async (req, res) => {
         return res.status(422).json({ errors: errors.array() });
     }
 
-    const { name, lastName, user, email, phone, password, roles = ['user'] } = req.body; // Asigna "user" si no hay roles
+    const { name, lastName, user, email, phone, password, roles = 'user' } = req.body; // Asigna "user" si no hay roles
 
     try {
         let userExists = await Login.findOne({ email });

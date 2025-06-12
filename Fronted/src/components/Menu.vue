@@ -1,11 +1,15 @@
 <script setup>
 import { ref, onMounted, computed } from "vue"
-import { useRouter } from "vue-router" // Importar useRouter
+import { useRouter } from "vue-router"
 import AddToCartModal from '@/components/AddToCartModal.vue'
+import { useAuth } from '@/composables/useAuth.js' // Importar el composable
 import axios from 'axios'
 
-
+const API_URL = import.meta.env.VITE_API_URL
 const router = useRouter()
+
+// Usar el composable de autenticación
+const { isAuthenticated, user, checkAuthStatus } = useAuth()
 
 const dishes = ref([])
 const loading = ref(true)
@@ -23,10 +27,6 @@ const quantity = ref(1)
 const showNotification = ref(false)
 const notificationMessage = ref('')
 const notificationType = ref('success') // 'success' o 'error'
-
-// Auth state
-const isAuthenticated = ref(false)
-const user = ref(null)
 
 const filteredDishes = computed(() => {
     if (activeFilter.value === "todos") return dishes.value
@@ -48,29 +48,13 @@ const prevPage = () => {
     if (currentPage.value > 1) currentPage.value--
 }
 
-// Verificar si el usuario está autenticado
-const checkAuthStatus = async () => {
-    try {
-        const response = await axios.get('http://localhost:3000/login/profile', {
-            withCredentials: true
-        })
-        
-        if (response.data) {
-            isAuthenticated.value = true
-            user.value = response.data
-        }
-    } catch (error) {
-        console.log('Usuario no autenticado:', error)
-        isAuthenticated.value = false
-        user.value = null
-    }
-}
-
 const getAlldishes = async () => {
     try {
         loading.value = true
         error.value = null
-        const res = await fetch("http://localhost:3000/dishes/")
+
+        const res = await fetch(`${API_URL}/dishes/`)
+
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`)
         const data = await res.json()
         dishes.value = data
@@ -163,7 +147,7 @@ const redirectToLogin = () => {
 }
 
 onMounted(async () => {
-    await checkAuthStatus()
+    await checkAuthStatus() // Usar el método del composable
     await getAlldishes()
 })
 </script>
@@ -265,7 +249,7 @@ onMounted(async () => {
                         </div>
                     </div>
 
-                    <img :src="`http://localhost:3000${dish.imagen}`" :alt="dish.nombre"
+                    <img :src="`${API_URL}${dish.imagen}`" :alt="dish.nombre"
                         class="w-full h-52 object-cover shadow-2xl" />
                     <div class="flex flex-col p-4 gap-2">
                         <h3 class="text-xl font-bold">{{ dish.nombre }}</h3>
@@ -300,7 +284,7 @@ onMounted(async () => {
             </div>
         </section>
 
-        <!-- Modal - Ahora pasa isAuthenticated como prop -->
+        <!-- Modal -->
         <AddToCartModal 
             :show="showModal" 
             :dish="selectedDish" 

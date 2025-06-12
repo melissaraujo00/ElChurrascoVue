@@ -1,6 +1,7 @@
 <script setup>
 import axios from 'axios';
 import { ref, onMounted, computed, onBeforeUnmount, nextTick } from 'vue';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const productos = ref([]);
 const scrollContainer = ref(null);
@@ -17,7 +18,7 @@ const updateCardWidth = () => {
 
 const fetchProductos = async () => {
   try {
-    const res = await axios('http://localhost:3000/dishes/');
+    const res = await axios(`${API_URL}/dishes/`);
     productos.value = res.data.filter(p => p.imprescindible === true);
     await nextTick();
     updateCardWidth();
@@ -93,12 +94,12 @@ const scrollToIndex = () => {
           >
             <div class="w-full">
               <img
-                :src="`http://localhost:3000${item.imagen}`"
+                :src="`${API_URL}${item.imagen}`"
                 :alt="item.nombre"
                 class="w-full h-40 sm:h-44 md:h-48 object-cover mb-4 rounded"
               />
             </div>
-            <h2 class="text-lg md:text-xl font-medium ml-3">{{ item.nombre }}</h2>
+            <h2 class="text-lg md:text-xl font-medium">{{ item.nombre }}</h2>
             <p>{{ item.descripcion }}</p>
           </div>
         </div>
@@ -133,6 +134,8 @@ const scrollToIndex = () => {
         Menú
       </router-link>
     </div>
+  <br>
+    <div class="w-full h-px bg-white mb-6"></div>
   </div>
 </template>
 

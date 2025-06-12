@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue'
+const API_URL = import.meta.env.VITE_API_URL;
 
 const props = defineProps({
     show: Boolean,
@@ -52,7 +53,7 @@ const totalPrice = computed(() => {
             
             <!-- Header -->
             <div class="relative">
-                <img v-if="dish" :src="`http://localhost:3000${dish.imagen}`" :alt="dish.nombre"
+                <img v-if="dish" :src="`${API_URL}${dish.imagen}`" :alt="dish.nombre"
                     class="w-full h-48 object-cover rounded-t-2xl" />
                 
                 <!-- Close Button -->

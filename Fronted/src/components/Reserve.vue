@@ -2,6 +2,7 @@
 import { useForm, useField } from 'vee-validate';
 import * as yup from 'yup';
 import axios from 'axios';
+const API_URL = import.meta.env.VITE_API_URL;
 
 
 const schema = yup.object({
@@ -40,7 +41,7 @@ const { value: additional } = useField('additional');
 
 const onSubmit = handleSubmit(async (values) => {
   try {
-    const response = await axios.post('http://localhost:3000/reservations', {
+    const response = await axios.post('${API_URL}/reservations', {
       nombre: values.name,
       numeroPersonas: values.people,
       fecha: values.date,

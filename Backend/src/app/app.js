@@ -28,8 +28,8 @@ app.use(express.json());
 app.use(morgan('dev'));
 app.use(cors(
   {
-    origin: 'http://localhost:5173', // o tu frontend en producción
-  credentials: true
+     origin: process.env.URL_CORS_ORIGIN, 
+    credentials: true
   }
 ));
 

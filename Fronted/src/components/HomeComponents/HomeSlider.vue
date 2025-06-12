@@ -18,9 +18,13 @@
           Sabor, frescura y momentos inolvidables
         </p>
       </div>
-      <button class="bg-white text-black px-6 py-3 mt-4 rounded hover:bg-gray-200 transition-colors duration-200 text-lg sm:text-xl md:text-2xl font-bold shadow-white/50 shadow-md">
-        ¡Unite a la Familia!
-      </button>
+      <router-link
+          :to="{ name: 'Register' }"
+          class="bg-white text-black px-6 py-3 mt-4 rounded hover:bg-gray-200 transition-colors duration-200 text-lg sm:text-xl md:text-2xl font-bold shadow-white/50 shadow-md"
+        >
+          ¡Unite a la Familia!
+        </router-link>
+
     </div>
   </section>
 </template>

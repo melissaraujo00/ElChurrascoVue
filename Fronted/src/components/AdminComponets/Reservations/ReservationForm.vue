@@ -95,7 +95,6 @@ const onSubmit = handleSubmit(async (formValues) => {
   }
 });
 </script>
-
 <template>
   <div class="relative w-full col-span-2 overflow-hidden h-[800px]">
     <div class="absolute inset-0 flex flex-col items-center justify-center m-3 px-4">

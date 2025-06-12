@@ -8,6 +8,8 @@ import Login from '../components/Login.vue';
 import Cart from '../components/Cart.vue';
 import Users from '@/components/AdminComponets/user/Users.vue';
 import UserCreate from '@/components/AdminComponets/user/ModalCrearUsuario.vue';
+import CrudSpecialities from "@/components/AdminComponets/Specialties/CrudSpecialities.vue"; 
+
 
 
 const routes = [
@@ -20,6 +22,7 @@ const routes = [
     { path: '/cart', component: Cart ,name: 'Cart'},
     { path: '/user', component: Users, name: 'User'},
     { path: '/user/create', component: UserCreate, name: 'UserCreate' },
+    { path: '/CrudSpecialities', component: CrudSpecialities, name: 'CrudSpecialities'}
 ]
 
 const router = createRouter({

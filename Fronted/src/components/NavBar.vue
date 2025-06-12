@@ -1,14 +1,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useAuth } from '@/composables/useAuth.js' // Importar el composable
 
-const API_URL = import.meta.env.VITE_API_URL
-const router = useRouter()
-
-// Estado global de sesión
-const isAuthenticated = ref(false)
-const userRole = ref('user')
-const userProfile = ref({ name: '', email: '' })  // <-- info del perfil
+// Usar el composable de autenticación
+const { isAuthenticated, user, userRole, checkAuthStatus, logout } = useAuth()
 
 // Estado menú
 const menuOpen = ref(false)
@@ -33,54 +28,18 @@ const menus = {
 }
 const menuItems = computed(() => menus[userRole.value] || menus.user)
 
-// Función para comprobar sesión y obtener perfil
-const checkAuth = async () => {
-  try {
-    const res = await fetch(`${API_URL}/login/profile`, {
-      credentials: 'include' // importante para enviar cookies
-    })
-    if (res.ok) {
-      const data = await res.json()
-      isAuthenticated.value = true
-      userRole.value = data.roles || 'user'
-    } else {
-      // No hacer res.json() si no es ok
-      isAuthenticated.value = false
-      userRole.value = 'user'
-    }
-  } catch (err) {
-    isAuthenticated.value = false
-    userRole.value = 'user'
-    userProfile.value = { name: '', email: '' }
+// Función logout mejorada
+const handleLogout = async () => {
+  const success = await logout()
+  if (success) {
+    closeUserMenu()
   }
 }
 
-// Al montar el componente comprobamos la sesión y perfil
+// Al montar el componente comprobamos la sesión
 onMounted(() => {
-  checkAuth()
+  checkAuthStatus()
 })
-
-// Función logout
-const logout = async () => {
-  try {
-    const res = await fetch(`${API_URL}/login/logout`, {
-      method: 'POST',
-      credentials: 'include'
-    })
-    if (res.ok) {
-      isAuthenticated.value = false
-      userRole.value = 'user'
-      userProfile.value = { name: '', email: '' }
-      closeUserMenu()
-      router.push({ name: 'Menu' })
-    } else {
-      const errorData = await res.json()
-      console.error('Error logout:', errorData.message)
-    }
-  } catch (err) {
-    console.error('Error logout:', err)
-  }
-}
 </script>
 
 <template>
@@ -129,13 +88,13 @@ const logout = async () => {
           />
           <div v-if="userMenuOpen" class="absolute right-0 mt-2 w-48 bg-white text-black rounded shadow z-50 p-2">
             <p class="px-4 py-1 font-semibold border-b border-gray-300">
-              {{ userProfile.name }}<br />
-              <small class="text-gray-600">{{ userProfile.email }}</small>
+              {{ user?.name || 'Usuario' }}<br />
+              <small class="text-gray-600">{{ user?.email || '' }}</small>
             </p>
             <router-link to="/perfil" class="block px-4 py-2 hover:bg-gray-200" @click="closeUserMenu">
               Editar perfil
             </router-link>
-            <button @click="logout" class="block w-full text-left px-4 py-2 hover:bg-gray-200">Cerrar sesión</button>
+            <button @click="handleLogout" class="block w-full text-left px-4 py-2 hover:bg-gray-200">Cerrar sesión</button>
           </div>
         </template>
         <template v-else>

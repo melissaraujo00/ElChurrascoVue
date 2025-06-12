@@ -1,10 +1,14 @@
 <script setup>
 import { ref, reactive, defineProps } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuth } from '@/composables/useAuth.js' // Importar el composable
 import axios from 'axios'
 
 const API_URL = import.meta.env.VITE_API_URL
 const router = useRouter()
+
+// Usar el composable de autenticación
+const { login, checkAuthStatus } = useAuth()
 
 // Prop para determinar si es login o register
 const props = defineProps({
@@ -82,24 +86,25 @@ const handleSubmit = async () => {
 
   try {
     if (props.isLogin) {
-      const res = await axios.post(
-        `${API_URL}/login/signin`,
-        {
-          email: form.email,
-          password: form.password
-        },
-        { withCredentials: true }
-      )
-      // Guardar token si está presente
-      const token = res.data.token
-      if (token) localStorage.setItem('token', token)
-
-      await router.push({ name: 'Menu' })
+      // Usar el método login del composable
+      const result = await login({
+        email: form.email,
+        password: form.password
+      })
+      
+      if (result.success) {
+        await router.push({ name: 'Menu' })
+      } else {
+        generalError.value = result.message || 'Error al iniciar sesión'
+      }
     } else {
+      // Para registro, mantener la lógica original pero actualizar el estado después
       const res = await axios.post(`${API_URL}/login/register`, form)
       const token = res.data.token
       if (token) localStorage.setItem('token', token)
 
+      // Después del registro exitoso, verificar el estado de autenticación
+      await checkAuthStatus()
       await router.push({ name: 'Menu' })
     }
   } catch (err) {

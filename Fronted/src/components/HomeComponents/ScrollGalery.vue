@@ -94,7 +94,7 @@ const scrollToIndex = () => {
           >
             <div class="w-full">
               <img
-                :src="` ${API_URL}${item.imagen}`"
+                :src="`${API_URL}${item.imagen}`"
                 :alt="item.nombre"
                 class="w-full h-40 sm:h-44 md:h-48 object-cover mb-4 rounded"
               />

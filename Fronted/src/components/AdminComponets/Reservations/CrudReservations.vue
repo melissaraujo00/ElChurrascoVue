@@ -108,6 +108,13 @@ const filteredReservations = computed(() => {
                   >
                     Editar
                   </button>
+                  <button
+                    @click="editReservation(reservation)"
+                    type="button"
+                    class="text-white bg-red-600 hover:bg-red-700 font-medium text-sm rounded-md px-5 py-1.5 shadow-md transition duration-200 border-2 border-red-500"
+                  >
+                    Eliminar
+                  </button>
                 </div>
               </td>
             </tr>

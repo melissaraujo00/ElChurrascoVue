@@ -21,7 +21,9 @@ const routes = [
     { path: '/user', component: Users, name: 'User'},
     { path: '/cart', name: 'Cart'},
     { path: '/cart', component:Cart ,name: 'Cart'},
-    { path: '/CrudSpecialities', component: CrudSpecialities, name: 'CrudSpecialities'}
+    { path: '/CrudSpecialities', component: CrudSpecialities, name: 'CrudSpecialities'},
+    
+    
 ]
 
 const router = createRouter({

@@ -15,9 +15,7 @@ const closeUserMenu = () => { userMenuOpen.value = false }
 // Menús por rol
 const menus = {
   admin: [
-    { label: 'Dashboard', path: 'Dashboard' },
-    { label: 'Usuarios', path: 'Usuarios' },
-    { label: 'Ajustes', path: 'Ajustes' }
+    { label: 'CrudSpecialities', path: 'CrudSpecialities'}
   ],
   user: [
     { label: 'Inicio', path: 'Home' },

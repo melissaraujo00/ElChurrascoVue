@@ -1,11 +1,7 @@
 <script setup>
 import { ref, reactive, defineProps } from 'vue'
 import { useRouter } from 'vue-router'
-<<<<<<< HEAD
-import { useAuth } from '@/composables/useAuth.js' // Importar el composable
-=======
 import { useAuthStore } from '@/stores/auth'
->>>>>>> 5e7101e42e7d3feb1bf4d3819bf224b9f37a7ce9
 import axios from 'axios'
 
 const API_URL = import.meta.env.VITE_API_URL
@@ -90,19 +86,6 @@ const handleSubmit = async () => {
 
   try {
     if (props.isLogin) {
-<<<<<<< HEAD
-      // Usar el método login del composable
-      const result = await login({
-        email: form.email,
-        password: form.password
-      })
-      
-      if (result.success) {
-        await router.push({ name: 'Menu' })
-      } else {
-        generalError.value = result.message || 'Error al iniciar sesión'
-      }
-=======
       const res = await axios.post(
         `${API_URL}/login/signin`,
         {
@@ -114,19 +97,12 @@ const handleSubmit = async () => {
       const token = res.data.token
       if (token) authStore.login(token) // ✅ GUARDADO REACTIVO
       await router.push({ name: 'Menu' })
->>>>>>> 5e7101e42e7d3feb1bf4d3819bf224b9f37a7ce9
     } else {
       // Para registro, mantener la lógica original pero actualizar el estado después
       const res = await axios.post(`${API_URL}/login/register`, form)
       const token = res.data.token
-<<<<<<< HEAD
-      if (token) localStorage.setItem('token', token)
-
-      // Después del registro exitoso, verificar el estado de autenticación
-      await checkAuthStatus()
-=======
       if (token) authStore.login(token) // ✅ GUARDADO REACTIVO
->>>>>>> 5e7101e42e7d3feb1bf4d3819bf224b9f37a7ce9
+
       await router.push({ name: 'Menu' })
     }
   } catch (err) {

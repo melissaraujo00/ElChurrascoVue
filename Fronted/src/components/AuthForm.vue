@@ -1,6 +1,7 @@
 <script setup>
 import { ref, reactive, defineProps } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuth } from '@/composables/useAuth'
 import { useAuthStore } from '@/stores/auth'
 import axios from 'axios'
 

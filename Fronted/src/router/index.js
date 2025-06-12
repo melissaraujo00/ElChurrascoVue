@@ -6,6 +6,7 @@ import Events from '../components/Events.vue';
 import Register from '../components/Register.vue';
 import Login from '../components/Login.vue';
 import Cart from '../components/Cart.vue';
+import Users from '@/components/AdminComponets/Users.vue'
 
 
 const routes = [
@@ -15,8 +16,8 @@ const routes = [
     { path: '/events', component: Events, name: 'Events' },
     { path: '/register', component: Register, name: 'Register' },
     { path: '/login', component: Login, name: 'Login' },
-    { path: '/cart', name: 'Cart'},
-    { path: '/cart', component:Cart ,name: 'Cart'}
+    { path: '/cart', component: Cart ,name: 'Cart'},
+    { path: '/user', component: Users, name: 'User'}
 ]
 
 const router = createRouter({

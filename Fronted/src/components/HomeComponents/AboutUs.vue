@@ -1,10 +1,11 @@
 <script setup>
-const images = [
-  '../../../public/img/imagen_2.jpg',
-  '../../../public/img/imagen_1.jpg',
-  '../../../public/img/imagen_3.jpg',
-  '../../../public/img/imagen_4.jpg'
-];
+import { ref } from 'vue';
+const images = ref([
+  '/img/imagen_2.jpg',
+  '/img/imagen_1.jpg',
+  '/img/imagen_3.jpg',
+  'img/imagen_4.jpg'
+]);
 </script>
 
 

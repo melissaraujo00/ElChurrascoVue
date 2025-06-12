@@ -1,42 +1,25 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const usuarios = ref([])
 const textoBusqueda = ref('')
 
-onMounted(() => {
-    usuarios.value = [
-        {
-            _id: '1',
-            name: 'Juan',
-            lastName: 'Pérez',
-            user: 'juanp',
-            email: 'juanp@example.com',
-            phone: '1234-5678',
-            roles: ['Administrador']
-        },
-        {
-            _id: '2',
-            name: 'Ana',
-            lastName: 'Gómez',
-            user: 'anag',
-            email: 'ana@example.com',
-            phone: '8765-4321',
-            roles: ['Usuario']
-        },
-        {
-            _id: '3',
-            name: 'Carlos',
-            lastName: 'Ramírez',
-            user: 'carlitos',
-            email: 'carlos@example.com',
-            phone: '1122-3344',
-            roles: ['Editor', 'Usuario']
+onMounted(async () => {
+    try {
+        const respuesta = await fetch(`${API_URL}/login`)
+        if (!respuesta.ok) {
+            throw new Error('Error al obtener los usuarios')
         }
-    ]
+        const datos = await respuesta.json();
+        usuarios.value = datos;
+        console.log(usuarios.value);
+    } catch (error) {
+        console.error('Error al obtener los datos:', error);
+        console.log(usuarios.value);
+    }
 })
 
-// Computed para filtrar usuarios según el texto de búsqueda
 const usuariosFiltrados = computed(() => {
     if (!textoBusqueda.value.trim()) {
         return usuarios.value
@@ -49,6 +32,7 @@ const usuariosFiltrados = computed(() => {
     )
 })
 </script>
+
 
 <template>
     <div class="p-6 text-gray-900">

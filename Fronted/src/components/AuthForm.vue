@@ -76,7 +76,7 @@ const handleSubmit = async () => {
   try {
     if (props.isLogin) {
       const res = await axios.post(
-        ` ${API_URL}0/login/signin`,
+        `${API_URL}/login/signin`,
         {
           email: form.email,
           password: form.password
@@ -86,7 +86,7 @@ const handleSubmit = async () => {
       alert('Login exitoso')
       console.log(res.data)
     } else {
-      const res = await axios.post(` ${API_URL}0/login/register`, form)
+      const res = await axios.post(`${API_URL}/login/register`, form)
       alert('Registro exitoso')
       console.log(res.data)
     }

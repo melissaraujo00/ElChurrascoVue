@@ -6,7 +6,7 @@ import Events from '../components/Events.vue';
 import Register from '../components/Register.vue';
 import Login from '../components/Login.vue';
 import Crud from '../components/AdminComponets/crud.vue';
-
+import Cart from '../components/Cart.vue';
 
 
 const routes = [
@@ -19,6 +19,7 @@ const routes = [
     { path: '/cart', name: 'Cart'},
     { path: '/crud', component: Crud, name: 'Crud' },
     
+    { path: '/cart', component:Cart ,name: 'Cart'}
 ]
 
 const router = createRouter({

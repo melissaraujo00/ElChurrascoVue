@@ -1,28 +1,39 @@
 <script setup>
 import { ref, onMounted, computed } from "vue"
+import AddToCartModal from '@/components/AddToCartModal.vue'
+import axios from 'axios'
 const API_URL = import.meta.env.VITE_API_URL
 
 const dishes = ref([])
 const loading = ref(true)
 const error = ref(null)
-
 const currentPage = ref(1)
 const itemsPerPage = 6
-
 const activeFilter = ref("todos")
 
+// Modal state
+const showModal = ref(false)
+const selectedDish = ref(null)
+const quantity = ref(1)
+
+// Notification state
+const showNotification = ref(false)
+const notificationMessage = ref('')
+const notificationType = ref('success') // 'success' o 'error'
+
+// Auth state
+const isAuthenticated = ref(false)
+const user = ref(null)
 
 const filteredDishes = computed(() => {
     if (activeFilter.value === "todos") return dishes.value
-    return dishes.value.filter(dish => dish.tipo === activeFilter.value)
+    return dishes.value.filter(dish => dish.type === activeFilter.value)
 })
-
 
 const paginatedDishes = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage
     return filteredDishes.value.slice(start, start + itemsPerPage)
 })
-
 
 const totalPages = computed(() => Math.ceil(filteredDishes.value.length / itemsPerPage))
 
@@ -34,15 +45,34 @@ const prevPage = () => {
     if (currentPage.value > 1) currentPage.value--
 }
 
+// Verificar si el usuario está autenticado
+const checkAuthStatus = async () => {
+    try {
+        const response = await axios.get('${API_URL}/login/profile', {
+            withCredentials: true
+        })
+        
+        if (response.data) {
+            isAuthenticated.value = true
+            user.value = response.data
+        }
+    } catch (error) {
+        console.log('Usuario no autenticado:', error)
+        isAuthenticated.value = false
+        user.value = null
+    }
+}
 
 const getAlldishes = async () => {
     try {
         loading.value = true
+        error.value = null
+
         const res = await fetch(`${API_URL}/dishes/`)
+
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`)
         const data = await res.json()
         dishes.value = data
-        error.value = null
     } catch (err) {
         error.value = err.message
         console.error("Error al cargar los productos:", err)
@@ -51,8 +81,91 @@ const getAlldishes = async () => {
     }
 }
 
-onMounted(() => {
-    getAlldishes()
+// Modal functions - Ahora siempre abre el modal
+const openModal = (dish) => {
+    selectedDish.value = dish
+    quantity.value = 1
+    showModal.value = true
+}
+
+const closeModal = () => {
+    showModal.value = false
+    selectedDish.value = null
+    quantity.value = 1
+}
+
+const updateQuantity = (newQuantity) => {
+    quantity.value = newQuantity
+}
+
+const addToCart = () => {
+    // Si no está autenticado, mostrar notificación pero no agregar al carrito
+    if (!isAuthenticated.value) {
+        showNotification.value = true
+        notificationMessage.value = 'Debes iniciar sesión para agregar productos al carrito'
+        notificationType.value = 'error'
+        setTimeout(() => {
+            showNotification.value = false
+        }, 4000)
+        return
+    }
+
+    if (selectedDish.value) {
+        const cartItem = {
+            id: selectedDish.value._id,
+            nombre: selectedDish.value.nombre,
+            precio: selectedDish.value.precio,
+            imagen: selectedDish.value.imagen,
+            cantidad: quantity.value,
+            total: selectedDish.value.precio * quantity.value
+        }
+        try {
+            // Obtener carrito existente
+            const existingCart = JSON.parse(localStorage.getItem('cart') || '[]')
+            const existingItemIndex = existingCart.findIndex(item => item.id === cartItem.id)
+            
+            if (existingItemIndex > -1) {
+                // Si el item ya existe, actualizar cantidad y total
+                existingCart[existingItemIndex].cantidad += cartItem.cantidad
+                existingCart[existingItemIndex].total = existingCart[existingItemIndex].precio * existingCart[existingItemIndex].cantidad
+            } else {
+                // Si es un item nuevo, agregarlo al carrito
+                existingCart.push(cartItem)
+            }
+            
+            // Guardar carrito actualizado
+            localStorage.setItem('cart', JSON.stringify(existingCart))
+            
+            // Mostrar notificación de éxito
+            showSuccessNotification(`${cartItem.nombre} agregado al carrito!`, 'success')
+            
+            // Cerrar modal
+            closeModal()
+        } catch (error) {
+            console.error('Error al agregar al carrito:', error)
+            showSuccessNotification('Error al agregar al carrito', 'error')
+        }
+    }
+}
+
+const showSuccessNotification = (message, type = 'success') => {
+    notificationMessage.value = message
+    notificationType.value = type
+    showNotification.value = true
+    setTimeout(() => {
+        showNotification.value = false
+    }, 3000)
+}
+
+const redirectToLogin = () => {
+    // Aquí puedes usar router.push si tienes vue-router configurado
+    // router.push('/login')
+    window.location.href = '/login' // O la ruta que uses para login
+}
+
+onMounted(async () => {
+    await checkAuthStatus()
+    await getAlldishes()
 })
 </script>
 
@@ -75,6 +188,31 @@ onMounted(() => {
 
         <div class="w-[90%] h-px bg-white my-6 mx-auto"></div>
 
+        <!-- Auth Status Banner (opcional) -->
+        <div v-if="!isAuthenticated" class="bg-blue-600/20 border border-blue-500 text-blue-200 px-4 py-3 rounded-lg mx-4 mb-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                    <span>Puedes explorar nuestro menú. Para agregar productos al carrito, inicia sesión</span>
+                </div>
+                <button @click="redirectToLogin" class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm font-medium transition-colors">
+                    Iniciar Sesión
+                </button>
+            </div>
+        </div>
+
+        <!-- User Welcome (si está logueado) -->
+        <div v-if="isAuthenticated && user" class="bg-green-600/20 border border-green-500 text-green-200 px-4 py-3 rounded-lg mx-4 mb-4">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                </svg>
+                <span>¡Bienvenido, {{ user.name }}! Ya puedes agregar productos al carrito.</span>
+            </div>
+        </div>
+
         <!-- Filtros -->
         <section>
             <h1 class="text-center text-4xl font-bold">¡Nuestros platillos imperdibles!</h1>
@@ -83,7 +221,7 @@ onMounted(() => {
                 <button
                     class="flex flex-col items-center space-y-1 transform transition duration-300 ease-in-out hover:scale-[1.15]"
                     @click="() => { activeFilter = 'todos'; currentPage = 1 }">
-                    <img src="../../public/img/campanita.png" alt="Todos" class="w-10 h-10">
+                    <img src="../../public/img/campanita.png" alt="Todos" class="w-10 h-10 ">
                     <span class="text-sm font-medium">Todos</span>
                 </button>
 
@@ -120,25 +258,41 @@ onMounted(() => {
         <!-- Listado de platillos -->
         <section class="mt-12 px-4">
             <div v-if="loading" class="text-center text-white">
-                <p>Cargando platillos...</p>
+                <div class="flex justify-center items-center">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white mr-2"></div>
+                    <p>Cargando platillos...</p>
+                </div>
             </div>
 
             <div v-else-if="error" class="text-center text-red-400">
                 <p>Error al cargar platillos: {{ error }}</p>
-                <button @click="getAlldishes()" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded">
+                <button @click="getAlldishes()"
+                    class="mt-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors">
                     Reintentar
                 </button>
             </div>
 
             <div v-else-if="filteredDishes.length === 0" class="text-center text-white">
-                <p>No hay platillos disponibles</p>
+                <p>No hay platillos disponibles para este filtro</p>
             </div>
 
             <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mt-8">
                 <div v-for="dish in paginatedDishes" :key="dish._id"
-                    class="flex flex-col bg-gray-900 text-white rounded-2xl shadow-lg overflow-hidden hover:scale-105 transition-transform duration-300">
-                    <img :src="` ${API_URL}0${dish.imagen}`" :alt="dish.nombre"
-                        class="w-full h-52 object-cover" />
+                    class="flex flex-col bg-gray-900 text-white rounded-2xl shadow-[0_4px_10px_rgba(107,114,128,0.5)] overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer relative"
+                    @click="openModal(dish)">
+                    
+                    <!-- Badge de "Inicia sesión" si no está autenticado -->
+                    <div v-if="!isAuthenticated" class="absolute top-3 right-3 z-10">
+                        <div class="bg-blue-600/90 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-medium flex items-center">
+                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                            </svg>
+                            Inicia sesión
+                        </div>
+                    </div>
+
+                    <img :src="`${API_URL}${dish.imagen}`" :alt="dish.nombre"
+                        class="w-full h-52 object-cover shadow-2xl" />
                     <div class="flex flex-col p-4 gap-2">
                         <h3 class="text-xl font-bold">{{ dish.nombre }}</h3>
                         <p class="text-lg text-white font-semibold text-right">
@@ -171,5 +325,39 @@ onMounted(() => {
                 </button>
             </div>
         </section>
+
+        <!-- Modal - Ahora pasa isAuthenticated como prop -->
+        <AddToCartModal 
+            :show="showModal" 
+            :dish="selectedDish" 
+            :quantity="quantity" 
+            :isAuthenticated="isAuthenticated"
+            @close="closeModal"
+            @update:quantity="updateQuantity" 
+            @add="addToCart" 
+            @login="redirectToLogin" />
+
+        <!-- Notificaciones -->
+        <div v-if="showNotification"
+            :class="[
+                'fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300 text-white',
+                notificationType === 'success' ? 'bg-green-600' : 'bg-red-600'
+            ]">
+            <div class="flex items-center">
+                <svg v-if="notificationType === 'success'" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clip-rule="evenodd" />
+                </svg>
+                <svg v-else class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+                {{ notificationMessage }}
+            </div>
+            <button v-if="notificationType === 'error'" @click="redirectToLogin" 
+                class="mt-2 w-full bg-white/20 hover:bg-white/30 px-3 py-1 rounded text-sm font-medium transition-colors">
+                Ir a Iniciar Sesión
+            </button>
+        </div>
     </div>
 </template>

@@ -18,7 +18,7 @@ const updateCardWidth = () => {
 
 const fetchProductos = async () => {
   try {
-    const res = await axios(` ${API_URL}0/dishes/`);
+    const res = await axios(`${API_URL}/dishes/`);
     productos.value = res.data.filter(p => p.imprescindible === true);
     await nextTick();
     updateCardWidth();
@@ -94,7 +94,7 @@ const scrollToIndex = () => {
           >
             <div class="w-full">
               <img
-                :src="` ${API_URL}0${item.imagen}`"
+                :src="`${API_URL}${item.imagen}`"
                 :alt="item.nombre"
                 class="w-full h-40 sm:h-44 md:h-48 object-cover mb-4 rounded"
               />

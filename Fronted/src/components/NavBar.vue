@@ -31,16 +31,6 @@ const paginas = ref([
                   <img src="/img/cuenta.png" alt="" class="w-12 h-12">
                 </router-link>
             </button>
-            <button >
-                <router-link :to="{name: 'Crud'}" class="transition-colors duration-200">
-                  <p>Crud</p>
-                </router-link>
-            </button>
-            <button >
-                <router-link :to="{name: 'CrudReservations'}" class="transition-colors duration-200">
-                  <p>Crud</p>
-                </router-link>
-            </button>
             <button>
                 <router-link :to="{name: 'Cart'}" >
                   <img src="/img/carro-de-la-compra.png" alt="" class="w-8 h-8">

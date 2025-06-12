@@ -5,8 +5,6 @@ import Reserve from '../components/Reserve.vue';
 import Events from '../components/Events.vue';
 import Register from '../components/Register.vue';
 import Login from '../components/Login.vue';
-import Crud from '../components/AdminComponets/CrudUsers.vue';
-import CrudReservations from '../components/AdminComponets/Reservations/CrudReservations.vue';
 import Cart from '../components/Cart.vue';
 
 
@@ -18,10 +16,7 @@ const routes = [
     { path: '/register', component: Register, name: 'Register' },
     { path: '/login', component: Login, name: 'Login' },
     { path: '/cart', name: 'Cart'},
-    { path: '/crud', component: Crud, name: 'Crud' },
-    
-    { path: '/cart', component:Cart ,name: 'Cart'},
-    { path: '/CrudReservations', component:CrudReservations ,name: 'CrudReservations'}
+    { path: '/cart', component:Cart ,name: 'Cart'}
 ]
 
 const router = createRouter({

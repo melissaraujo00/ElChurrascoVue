@@ -56,33 +56,38 @@ export const getGalleryImageById = async (req, res) => {
 
 //Actualizar una imagen por ID
 export const updateGalleryImage = [
-    validationGallery,
-    authMiddleware,
-    async (req, res) => {
-        try {
-            const { title, description } = req.body;
-            let imagen = null;
+  validationGallery,
+  authMiddleware,
+  async (req, res) => {
+    try {
+      const { title, description } = req.body;
 
-            if (req.file) {
-                imagen = `/uploads/${req.file.filename}`;
-            }
+      const updateData = {
+        title,
+        description
+      };
 
-            const updatedImage = await Gallery.findByIdAndUpdate(
-                req.params.id,
-                { title, description, imagen },
-                { new: true }
-            );
+      if (req.file) {
+        updateData.imagen = `/uploads/${req.file.filename}`;
+      }
 
-            if (!updatedImage) {
-                return res.status(404).json({ message: 'Imagen no encontrada.' });
-            }
+      const updatedImage = await Gallery.findByIdAndUpdate(
+        req.params.id,
+        updateData,
+        { new: true }
+      );
 
-            res.status(200).json(updatedImage);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
+      if (!updatedImage) {
+        return res.status(404).json({ message: 'Imagen no encontrada.' });
+      }
+
+      res.status(200).json(updatedImage);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
+  }
 ];
+
 
 //Eliminar una imagen por ID            
 export const deleteGalleryImage = async (req, res) => {

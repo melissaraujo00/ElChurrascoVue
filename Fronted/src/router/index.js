@@ -14,22 +14,24 @@ import UserCreate from '@/components/AdminComponets/user/ModalCrearUsuario.vue'
 import CrudSpecialities from "@/components/AdminComponets/Specialties/CrudSpecialities.vue"
 import CrudReservations from "@/components/AdminComponets/Reservations/CrudReservations.vue"
 import CrudDishes  from "@/components/AdminComponets/Dishes/CrudDishes.vue";
+import CrudGalleries  from "@/components/AdminComponets/Galleries/CrudGalleries.vue";
 
 
 const routes = [
-  { path: '/', component: Home, name: 'Home' },
-  { path: '/menu', component: Menu, name: 'Menu' },
-  { path: '/reserve', component: Reserve, name: 'Reserve' },
-  { path: '/events', component: Events, name: 'Events' },
-  { path: '/register', component: Register, name: 'Register' },
-  { path: '/login', component: Login, name: 'Login' },
-  { path: '/cart', component: Cart, name: 'Cart' },
-  { path: '/user', component: Users, name: 'User', meta: { requiresAuth: true, role: 'admin' } },
-  { path: '/user/create', component: UserCreate, name: 'UserCreate', meta: { requiresAuth: true, role: 'admin' } },
-  { path: '/CrudSpecialities', component: CrudSpecialities, name: 'CrudSpecialities', meta: { requiresAuth: true, role: 'admin' } },
-  { path: '/CrudReservations', component: CrudReservations, name: 'CrudReservations', meta: { requiresAuth: true, role: 'admin' } },
-  { path: '/CrudDishes', component: CrudDishes, name: 'CrudDishes' , meta: { requiresAuth: true, role: 'admin' } },
-
+    { path: '/', component: Home, name: 'Home'}, 
+    { path: '/menu', component: Menu, name: 'Menu'},
+    { path: '/reserve', component: Reserve,name: 'Reserve' },
+    { path: '/events', component: Events, name: 'Events' },
+    { path: '/register', component: Register, name: 'Register' },
+    { path: '/login', component: Login, name: 'Login' },
+    { path: '/cart', component: Cart ,name: 'Cart'},
+    { path: '/user', component: Users, name: 'User'},
+    { path: '/cart', name: 'Cart'},
+    { path: '/cart', component:Cart ,name: 'Cart'},
+    { path: '/CrudSpecialities', component: CrudSpecialities, name: 'CrudSpecialities'},
+    { path: '/CrudReservations', component: CrudReservations, name: 'CrudReservations'},
+    { path: '/CrudDishes', component: CrudDishes, name: 'CrudDishes'},
+    { path: '/CrudGalleries', component: CrudGalleries, name: 'CrudGalleries'}
 ]
 
 const router = createRouter({

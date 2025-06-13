@@ -134,7 +134,7 @@ export const inicioSesion = [async (req, res) => {
                 res.cookie('token', token, {
                     httpOnly: true,
                     secure: process.env.NODE_ENV === 'production',
-                    sameSite:  'None' , // 'None' para producción, 'Lax' en local
+                    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax', // 'None' para producción, 'Lax' en local
                     maxAge: 3600 * 24000 // 24 horas
                 });
 

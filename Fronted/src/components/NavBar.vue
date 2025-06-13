@@ -15,7 +15,12 @@ const closeUserMenu = () => { userMenuOpen.value = false }
 // Menús por rol
 const menus = {
   admin: [
-    { label: 'Especialidades', path: 'CrudSpecialities'},
+    { label: 'Inicio', path: 'Home' },
+    { label: 'Menú', path: 'Menu' },
+    { label: 'Reservar', path: 'Reserve' },
+    { label: 'Eventos', path: 'Events' },
+    { label: 'Usuarios', path: 'User' },
+    { label: 'Especialidades', path: 'CrudSpecialities' },
     { label: 'Reservaciones', path: 'CrudReservations'},
     { label: 'Platillos', path: 'CrudDishes'}
   ],
@@ -37,8 +42,8 @@ const handleLogout = async () => {
 }
 
 // Al montar el componente comprobamos la sesión
-onMounted(() => {
-  checkAuthStatus()
+onMounted(async () => {
+  await checkAuthStatus()
 })
 </script>
 

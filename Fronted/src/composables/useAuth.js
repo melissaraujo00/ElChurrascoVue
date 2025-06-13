@@ -1,66 +1,65 @@
 // composables/useAuth.js
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-
-// Estado global compartido
-const isAuthenticated = ref(false)
-const user = ref(null)
-const userRole = ref('user')
-
-const API_URL = import.meta.env.VITE_API_URL
+import { useAuthStore } from '@/stores/auth'
 
 export function useAuth() {
+  const authStore = useAuthStore()
   const router = useRouter()
+  const API_URL = import.meta.env.VITE_API_URL
 
-  // Función para verificar el estado de autenticación
   const checkAuthStatus = async () => {
+    if (authStore.isAuthenticated && authStore.user) return authStore.user
+
     try {
-      const response = await fetch(`${API_URL}/login/profile`, {
-        credentials: 'include'
-      })
-      
-      if (response.ok) {
+      const response = await fetch(`${API_URL}/login/profile`, { credentials: 'include' })
+
+      if (response.ok && response.headers.get('content-type')?.includes('application/json')) {
         const data = await response.json()
-        isAuthenticated.value = true
-        user.value = data
-        userRole.value = data.roles || 'user'
+        authStore.setAuth(data)
+        await loadUserCartOnAuth()
         return data
       } else {
-        // Si la respuesta no es ok, limpiar el estado
-        clearAuthState()
+        authStore.clearAuth()
         return null
       }
     } catch (error) {
-      console.log('Error al verificar autenticación:', error)
-      clearAuthState()
+      console.error('Error al verificar autenticación:', error)
+      authStore.clearAuth()
       return null
     }
   }
 
-  // Función para limpiar el estado de autenticación
-  const clearAuthState = () => {
-    isAuthenticated.value = false
-    user.value = null
-    userRole.value = 'user'
-    // Limpiar también el localStorage del carrito si es necesario
-    localStorage.removeItem('cart')
+  const loadUserCartOnAuth = async () => {
+    try {
+      const { useCart } = await import('@/composables/useCart.js')
+      const { loadUserCart, migrateTemporaryCart } = useCart()
+      migrateTemporaryCart()
+      loadUserCart()
+    } catch (error) {
+      console.log('Error al cargar carrito del usuario:', error)
+    }
   }
 
-  // Función para cerrar sesión
   const logout = async () => {
     try {
       const response = await fetch(`${API_URL}/login/logout`, {
         method: 'POST',
         credentials: 'include'
       })
-      
+
       if (response.ok) {
-        clearAuthState()
+        authStore.clearAuth()
+
+        const { useCart } = await import('@/composables/useCart.js')
+        const { clearCart } = useCart()
+        clearCart?.()
+
         router.push({ name: 'Menu' })
         return true
       } else {
-        const errorData = await response.json()
-        console.error('Error al cerrar sesión:', errorData.message)
+        const msg = await response.text()
+        console.error('Error al cerrar sesión:', msg)
         return false
       }
     } catch (error) {
@@ -69,46 +68,17 @@ export function useAuth() {
     }
   }
 
-  // Función para iniciar sesión
-  const login = async (credentials) => {
-    try {
-      const response = await fetch(`${API_URL}/login/signin`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(credentials),
-        credentials: 'include'
-      })
-
-      if (response.ok) {
-        // Verificar el estado después del login exitoso
-        await checkAuthStatus()
-        return { success: true }
-      } else {
-        const errorData = await response.json()
-        return { success: false, message: errorData.message }
-      }
-    } catch (error) {
-      console.error('Error al iniciar sesión:', error)
-      return { success: false, message: 'Error de conexión' }
+  const login = async (token) => {
+    if (token) {
+      await checkAuthStatus()
     }
   }
 
-  // Computed properties
-  const isLoggedIn = computed(() => isAuthenticated.value)
-  const currentUser = computed(() => user.value)
-  const currentUserRole = computed(() => userRole.value)
-
   return {
-    // Estado
-    isAuthenticated: isLoggedIn,
-    user: currentUser,
-    userRole: currentUserRole,
-    
-    // Métodos
+    isAuthenticated: computed(() => authStore.isAuthenticated),
+    user: computed(() => authStore.user),
+    userRole: computed(() => authStore.userRole),
     checkAuthStatus,
-    clearAuthState,
     logout,
     login
   }

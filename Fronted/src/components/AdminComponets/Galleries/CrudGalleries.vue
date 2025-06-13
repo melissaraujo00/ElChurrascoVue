@@ -98,7 +98,6 @@ function onSaved() {
       @click="closeModal"
       class="absolute top-3 right-3 text-gray-600 hover:text-gray-900 font-bold text-xl"
     >
-      &times;
     </button>
     <GalleryForm :initialData="selected" @cancel="closeModal" @saved="onSaved" />
   </div>

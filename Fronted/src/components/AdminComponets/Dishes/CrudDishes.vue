@@ -20,19 +20,27 @@ function closeModal() {
 }
 
 async function fetchDishes() {
-    try {
-        const res = await fetch(`${API_URL}/dishes`, {
-            method: 'GET'
-        });
-        if (!res.ok) {
-            const errorText = await res.text()
-            throw new Error(`Error ${res.status}: ${errorText}`);
-        };
-        return await res.json();
-    } catch (error) {
-        console.error('Error al obtener platos:', error);
-        return [];
+  try {
+    const res = await fetch(`${API_URL}/dishes`, {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`Error ${res.status}: ${errorText}`);
     }
+
+    const data = await res.json();
+
+    return data.map(dish => ({
+      ...dish,
+      especialidadNombre: dish.especialidad?.nombre || ''
+    }));
+  } catch (error) {
+    console.error('Error al obtener platos:', error);
+    return [];
+  }
 }
 
 function editDish(dish) {
@@ -78,7 +86,7 @@ function onSaved() {
         { label: 'Precio', key: 'precio' },
         { label: 'Descripción', key: 'descripcion' },
         { label: 'Imagen', key: 'imagen' },
-        { label: 'Especialidad', key: 'especialidad.nombre' },
+        { label: 'Especialidad', key: 'especialidadNombre' },
         { label: 'Imprescindible', key: 'imprescindible' },
         { label: 'Oferta', key: 'offer' }
     ]" :fetchData="fetchDishes" :editItem="editDish" :deleteItem="deleteDish"
@@ -87,7 +95,6 @@ function onSaved() {
 
     <div v-if="showModal" class="fixed inset-0 flex justify-center items-center z-50 bg-black/30">
         <button @click="closeModal" class="absolute top-3 right-3 text-gray-600 hover:text-gray-900 font-bold text-xl">
-            &times;
         </button>
         <DishForm :initialData="selected" @cancel="closeModal" @saved="onSaved" />
     </div>

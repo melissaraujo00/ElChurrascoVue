@@ -10,6 +10,7 @@ import Users from '@/components/AdminComponets/Users.vue'
 import CrudSpecialities from "@/components/AdminComponets/Specialties/CrudSpecialities.vue"; 
 import CrudReservations from "@/components/AdminComponets/Reservations/CrudReservations.vue";
 import CrudDishes  from "@/components/AdminComponets/Dishes/CrudDishes.vue";
+import CrudGalleries  from "@/components/AdminComponets/Galleries/CrudGalleries.vue";
 
 
 const routes = [
@@ -26,6 +27,7 @@ const routes = [
     { path: '/CrudSpecialities', component: CrudSpecialities, name: 'CrudSpecialities'},
     { path: '/CrudReservations', component: CrudReservations, name: 'CrudReservations'},
     { path: '/CrudDishes', component: CrudDishes, name: 'CrudDishes'},
+    { path: '/CrudGalleries', component: CrudGalleries, name: 'CrudGalleries'}
 ]
 
 const router = createRouter({

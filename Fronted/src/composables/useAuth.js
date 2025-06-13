@@ -78,7 +78,10 @@ const logout = async () => {
 
     if (response.ok) {
       clearAuthState()
-      window.location.href = '/menu' 
+      router.push({ name: 'Menu' }).then(() => {
+        router.go(0)
+      })
+
       return true
     } else {
       // Verificar si la respuesta es JSON antes de parsear

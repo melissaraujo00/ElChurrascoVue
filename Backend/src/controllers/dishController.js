@@ -103,23 +103,24 @@ export const updateDish = [
 
 
 export const deleteDish = [
-    authMiddleware,
-    async (req, res) => {
-        try {
-            const dish = await Dish.findById(req.params.id);
-            if (!dish) return res.status(404).json({ error: 'Plato no encontrado' });
+  async (req, res) => {
+    try {
+      const dish = await Dish.findById(req.params.id);
+      if (!dish) return res.status(404).json({ error: 'Plato no encontrado' });
 
-            // Eliminar imagen asociada si existe
-            if (dish.imagen && fs.existsSync(dish.imagen)) {
-            fs.unlinkSync(dish.imagen);
-            }
-
-            await Dish.findByIdAndDelete(req.params.id);
-            res.status(200).json({ message: 'Plato eliminado correctamente' });
-        } catch (error) {
-            res.status(500).json({ error: error.message });
+      try {
+        if (dish.imagen && fs.existsSync(dish.imagen)) {
+          fs.unlinkSync(dish.imagen);
         }
-    }
-];
+      } catch (err) {
+        console.error('Error al eliminar la imagen:', err.message);
+      }
 
+      await Dish.findByIdAndDelete(req.params.id);
+      res.status(200).json({ message: 'Plato eliminado correctamente' });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+];
 

@@ -16,7 +16,8 @@ const closeUserMenu = () => { userMenuOpen.value = false }
 const menus = {
   admin: [
     { label: 'Especialidades', path: 'CrudSpecialities'},
-    { label: 'Reservaciones', path: 'CrudReservations'}
+    { label: 'Reservaciones', path: 'CrudReservations'},
+    { label: 'Platillos', path: 'CrudDishes'}
   ],
   user: [
     { label: 'Inicio', path: 'Home' },

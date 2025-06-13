@@ -25,7 +25,8 @@ async function fetchSpecialties() {
     return await res.json();
   }
   catch(error){
-    res.status(500).json({error: 'error al obtener los datos'})
+    console.error('Error al obtener especialidades:', error);
+    return [];
   }
   
 }
@@ -47,7 +48,8 @@ async function deleteSpecialty(specialty) {
 
     crudTableRef.value?.loadData();
   } catch (error) {
-    res.status(500).json({error: 'error al obtener los datos'})
+    console.error('Error al obtener especialidades:', error);
+    return [];
   }
 }
 

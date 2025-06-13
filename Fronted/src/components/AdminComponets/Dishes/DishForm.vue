@@ -126,10 +126,10 @@ const onSubmit = handleSubmit(async (formValues) => {
 
 
 <template>
-    <div class="relative w-full col-span-2 overflow-hidden h-[800px]">
+    <div class="relative w-full col-span-2 overflow-hidden h-[700px]">
         <div class="absolute inset-0 flex flex-col items-center justify-center m-3 px-4">
-            <div class="p-8 bg-white rounded-xl w-full max-w-[690px] h-auto flex flex-col shadow-xl mx-4 sm:mx-5">
-                <h2 class="text-5xl text-black font-bold mb-8 mt-5 text-center">
+            <div class="p-8 bg-white rounded-xl w-full max-w-[690px] h-[800px] flex flex-col shadow-xl mx-4 sm:mx-5  overflow-auto">
+                <h2 class="text-4xl text-black font-bold mb-8 mt-5 text-center">
                     {{ initialData && initialData._id ? 'Editar Plato' : 'Agregar Plato' }}
                 </h2>
                 <form @submit.prevent="onSubmit" class="w-full flex flex-col gap-6">

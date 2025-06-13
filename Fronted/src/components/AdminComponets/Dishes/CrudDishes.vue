@@ -22,18 +22,26 @@ async function fetchDishes() {
   try {
     const res = await fetch(`${API_URL}/dishes`, {
       method: 'GET',
-      credentials: 'include' // ✅ Envía la cookie de sesión
+      credentials: 'include'
     });
+
     if (!res.ok) {
       const errorText = await res.text();
       throw new Error(`Error ${res.status}: ${errorText}`);
     }
-    return await res.json();
+
+    const data = await res.json();
+
+    return data.map(dish => ({
+      ...dish,
+      especialidadNombre: dish.especialidad?.nombre || ''
+    }));
   } catch (error) {
     console.error('Error al obtener platos:', error);
     return [];
   }
 }
+
 
 function editDish(dish) {
   selected.value = { ...dish };
@@ -48,7 +56,7 @@ async function deleteDish(dish) {
   try {
     const res = await fetch(`${API_URL}/dishes/${dish._id}`, {
       method: 'DELETE',
-      credentials: 'include' // ✅ Muy importante
+      credentials: 'include'
     });
 
     if (!res.ok) {
@@ -82,7 +90,7 @@ function onSaved() {
       { label: 'Precio', key: 'precio' },
       { label: 'Descripción', key: 'descripcion' },
       { label: 'Imagen', key: 'imagen' },
-      { label: 'Especialidad', key: 'especialidad.nombre' },
+      { label: 'Especialidad', key: 'especialidadNombre' },
       { label: 'Imprescindible', key: 'imprescindible' },
       { label: 'Oferta', key: 'offer' }
     ]"

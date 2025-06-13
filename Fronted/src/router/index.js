@@ -9,6 +9,7 @@ import Cart from '../components/Cart.vue';
 import Users from '@/components/AdminComponets/user/Users.vue';
 import UserCreate from '@/components/AdminComponets/user/ModalCrearUsuario.vue';
 import CrudSpecialities from "@/components/AdminComponets/Specialties/CrudSpecialities.vue"; 
+import CrudReservations from "@/components/AdminComponets/Reservations/CrudReservations.vue";
 
 
 
@@ -22,7 +23,10 @@ const routes = [
     { path: '/cart', component: Cart ,name: 'Cart'},
     { path: '/user', component: Users, name: 'User'},
     { path: '/user/create', component: UserCreate, name: 'UserCreate' },
-    { path: '/CrudSpecialities', component: CrudSpecialities, name: 'CrudSpecialities'}
+    { path: '/cart', component:Cart ,name: 'Cart'},
+    { path: '/CrudSpecialities', component: CrudSpecialities, name: 'CrudSpecialities'},
+    { path: '/CrudReservations', component: CrudReservations, name: 'CrudReservations'}
+
 ]
 
 const router = createRouter({

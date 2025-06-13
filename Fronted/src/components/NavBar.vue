@@ -17,6 +17,7 @@ const menus = {
   admin: [
     { label: 'Usuarios', path: 'User' },
     { label: 'Especialidades', path: 'CrudSpecialities' },
+    { label: 'Reservaciones', path: 'CrudReservations'}
   ],
   user: [
     { label: 'Inicio', path: 'Home' },

@@ -14,32 +14,46 @@ export function useAuth() {
 
   // Función para verificar el estado de autenticación
   const checkAuthStatus = async () => {
-    try {
-      const response = await fetch(`${API_URL}/login/profile`, {
-        credentials: 'include'
-      })
-      
-      if (response.ok) {
+  // Si ya tenemos usuario autenticado, evitamos hacer petición
+  if (isAuthenticated.value && user.value) return user.value
+
+  try {
+    const response = await fetch(`${API_URL}/login/profile`, {
+      credentials: 'include'
+    })
+
+    if (response.ok) {
+      const contentType = response.headers.get('content-type') || ''
+      if (contentType.includes('application/json')) {
         const data = await response.json()
         isAuthenticated.value = true
         user.value = data
         userRole.value = data.roles || 'user'
-        
-        // Después de verificar autenticación, cargar carrito del usuario
+
         await loadUserCartOnAuth()
-        
         return data
       } else {
-        // Si la respuesta no es ok, limpiar el estado
+        console.error('Respuesta no es JSON:', await response.text())
         clearAuthState()
         return null
       }
-    } catch (error) {
-      console.log('Error al verificar autenticación:', error)
+    } else if (response.status === 401) {
+      // Usuario no autenticado, limpiar estado y no hacer más peticiones
+      clearAuthState()
+      return null
+    } else {
+      // Otros errores HTTP
+      console.error('Error HTTP al verificar auth:', response.status)
       clearAuthState()
       return null
     }
+  } catch (error) {
+    console.error('Error al verificar autenticación:', error)
+    clearAuthState()
+    return null
   }
+}
+
 
   // Función para cargar carrito cuando se autentica
   const loadUserCartOnAuth = async () => {

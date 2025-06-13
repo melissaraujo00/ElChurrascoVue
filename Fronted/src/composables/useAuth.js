@@ -79,7 +79,7 @@ export function useAuth() {
       if (response.ok) {
         // El carrito del usuario se mantiene en localStorage con su clave única
         clearAuthState()
-        window.location.href = '/cart' 
+        window.location.href = '/menu' 
         router.push({ name: 'Menu' })
         return true
       } else {

@@ -9,43 +9,44 @@ const imagenFile = ref(null);
 const especialidades = ref([]);
 
 const props = defineProps({
-    initialData: {
-        type: Object,
-        default: () => ({}),
-    }
+  initialData: {
+    type: Object,
+    default: () => ({}),
+  }
 });
 
-
 onMounted(async () => {
-    try {
-        const res = await fetch(`${API_URL}/specialty`);
-        especialidades.value = await res.json();
-    } catch (error) {
-        console.error('Error al cargar especialidades:', error);
-    }
+  try {
+    const res = await fetch(`${API_URL}/specialty`, {
+      credentials: 'include' 
+    });
+    especialidades.value = await res.json();
+  } catch (error) {
+    console.error('Error al cargar especialidades:', error);
+  }
 });
 
 const validationSchema = yup.object({
-    nombre: yup.string().required('El nombre es obligatorio'),
-    descripcion: yup.string(),
-    precio: yup.number().min(0, 'El precio no puede ser negativo').required('El precio es obligatorio'),
-    imagen: yup.string(),
-    especialidad: yup.string().required('La especialidad es obligatoria'),
-    imprescindible: yup.boolean(),
-    offer: yup.string()
+  nombre: yup.string().required('El nombre es obligatorio'),
+  descripcion: yup.string(),
+  precio: yup.number().min(0, 'El precio no puede ser negativo').required('El precio es obligatorio'),
+  imagen: yup.string(),
+  especialidad: yup.string().required('La especialidad es obligatoria'),
+  imprescindible: yup.boolean(),
+  offer: yup.string()
 });
 
 const { handleSubmit, errors, setValues } = useForm({
-    validationSchema,
-    initialValues: {
-        nombre: '',
-        descripcion: '',
-        imagen: '',
-        precio: 0,
-        especialidad: '',
-        imprescindible: false,
-        offer: ''
-    }
+  validationSchema,
+  initialValues: {
+    nombre: '',
+    descripcion: '',
+    imagen: '',
+    precio: 0,
+    especialidad: '',
+    imprescindible: false,
+    offer: ''
+  }
 });
 
 const { value: nombre } = useField('nombre');
@@ -56,71 +57,73 @@ const { value: imprescindible } = useField('imprescindible');
 const { value: offer } = useField('offer');
 
 watch(() => props.initialData, (data) => {
-    if (data && Object.keys(data).length) {
-        setValues({
-            nombre: data.nombre || '',
-            descripcion: data.descripcion || '',
-            imagen: data.imagen || '',
-            precio: data.precio || 0,
-            especialidad: data.especialidad || '',
-            imprescindible: data.imprescindible || false,
-            offer: data.offer || ''
-        });
-    } else {
-        setValues({
-            nombre: '',
-            descripcion: '',
-            imagen: '',
-            precio: 0,
-            especialidad: '',
-            imprescindible: false,
-            offer: ''
-        });
-    }
+  if (data && Object.keys(data).length) {
+    setValues({
+      nombre: data.nombre || '',
+      descripcion: data.descripcion || '',
+      imagen: data.imagen || '',
+      precio: data.precio || 0,
+      especialidad: data.especialidad || '',
+      imprescindible: data.imprescindible || false,
+      offer: data.offer || ''
+    });
+  } else {
+    setValues({
+      nombre: '',
+      descripcion: '',
+      imagen: '',
+      precio: 0,
+      especialidad: '',
+      imprescindible: false,
+      offer: ''
+    });
+  }
 }, { immediate: true });
 
 function onFileChange(event) {
-    const file = event.target.files[0];
-    if (file) {
-        imagenFile.value = file;
-    }
+  const file = event.target.files[0];
+  if (file) {
+    imagenFile.value = file;
+  }
 }
 
 const onSubmit = handleSubmit(async (formValues) => {
-    try {
-        const isEdit = props.initialData && props.initialData._id;
-        const url = `${API_URL}/dishes${isEdit ? `/${props.initialData._id}` : ''}`;
-        const method = isEdit ? 'PUT' : 'POST';
+  try {
+    const isEdit = props.initialData && props.initialData._id;
+    const url = `${API_URL}/dishes${isEdit ? `/${props.initialData._id}` : ''}`;
+    const method = isEdit ? 'PUT' : 'POST';
 
-        const formData = new FormData();
-        for (const key in formValues) {
-            if (key !== 'imagen') {
-                formData.append(key, formValues[key]);
-            }
-        }
-        if (imagenFile.value) {
-            formData.append('imagen', imagenFile.value);
-        }
-
-        const res = await fetch(url, {
-            method,
-            body: formData,
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-            throw new Error(data.message || 'Error en la solicitud');
-        }
-
-        alert(data.message || (isEdit ? 'Plato actualizado correctamente' : 'Plato creado correctamente'));
-        emit('saved');
-    } catch (error) {
-        console.error(error);
-        alert('Ocurrió un error al guardar el plato.');
+    const formData = new FormData();
+    for (const key in formValues) {
+      if (key !== 'imagen') {
+        formData.append(key, formValues[key]);
+      }
     }
+    if (imagenFile.value) {
+      formData.append('imagen', imagenFile.value);
+    }
+
+    const res = await fetch(url, {
+      method,
+      body: formData,
+      credentials: 'include'
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || 'Error en la solicitud');
+    }
+
+    alert(data.message || (isEdit ? 'Plato actualizado correctamente' : 'Plato creado correctamente'));
+    emit('saved');
+  } catch (error) {
+    console.error(error);
+    alert('Ocurrió un error al guardar el plato.');
+  }
 });
 </script>
+
 
 <template>
     <div class="relative w-full col-span-2 overflow-hidden h-[800px]">

@@ -2,11 +2,10 @@
 import { useForm, useField } from 'vee-validate';
 import * as yup from 'yup';
 import { watch, ref } from 'vue';
-import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL;
 const emit = defineEmits(['saved', 'cancel']);
-const img= ref('');
+const imagenFile = ref(null);
 const token = localStorage.getItem('token');
 
 const props = defineProps({
@@ -19,8 +18,7 @@ const props = defineProps({
 
 const validationSchema = yup.object({
     nombre: yup.string().required('El nombre es obligatorio'),
-    descripcion: yup.string().required('La descripción es obligatoria'),
-    imagen: yup.string().required('La imagen es obligatoria'),
+    descripcion: yup.string(),
     type: yup.string()
         .oneOf(['Entradas', 'Platos Fuertes', 'Bebidas', 'Menu Infantil'], 'Tipo inválido')
         .required('El tipo es obligatorio')
@@ -38,7 +36,6 @@ const { handleSubmit, errors, setValues } = useForm({
 
 const { value: nombre } = useField('nombre');
 const { value: descripcion } = useField('descripcion');
-const { value: imagen } = useField('imagen');
 const { value: type } = useField('type');
 
 watch(() => props.initialData, (data) => {
@@ -59,45 +56,50 @@ watch(() => props.initialData, (data) => {
     }
 }, { immediate: true });
 
+function onFileChange(event) {
+    const file = event.target.files[0];
+    if (file) {
+        imagenFile.value = file;
+    }
+}
 
-const handleFileChange = async (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const formData = new FormData();
-  formData.append('imagen', file);
-
-  try {
-    const response = await axios.post(`${API_URL}/gallery`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        'Authorization': `Bearer ${token}`
-      }
-    });
-    withCredentials: true
-    imagen.value = response.data.imagenUrl;
-
-  } catch (error) {
-    alert('Error al subir la imagen');
-    console.error(error);
-  }
-};
 
 const onSubmit = handleSubmit(async (formValues) => {
     try {
-        if (props.initialData && props.initialData._id) {
-            const response = await axios.put(`${API_URL}/specialty/${props.initialData._id}`, formValues);
-            alert(response.data.message || 'Especialidad actualizada correctamente');
-        } else {
-            const response = await axios.post(`${API_URL}/specialty`, formValues);
-            alert(response.data.message || 'Especialidad creada correctamente');
+        const isEdit = props.initialData && props.initialData._id;
+        const url = `${API_URL}/specialty${isEdit ? `/${props.initialData._id}` : ''}`;
+        const method = isEdit ? 'PUT' : 'POST';
+
+        const formData = new FormData();
+        for (const key in formValues) {
+            if (key !== 'imagen') {
+                formData.append(key, formValues[key]);
+            }
         }
+        if (imagenFile.value) {
+            formData.append('imagen', imagenFile.value);
+        }
+
+        const res = await fetch(url, {
+            method,
+            body: formData,
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw new Error(data.message || 'Error en la solicitud');
+        }
+
+        alert(data.message || (isEdit ? 'Especialidad actualizada correctamente' : 'Especialidad creada correctamente'));
         emit('saved');
     } catch (error) {
         console.error(error);
         alert('Ocurrió un error al guardar la especialidad.');
     }
 });
+
+
 </script>
 <template>
     <div class="relative w-full col-span-2 overflow-hidden h-[800px]">
@@ -121,7 +123,7 @@ const onSubmit = handleSubmit(async (formValues) => {
                             class="w-full p-3 rounded-md text-gray-800 text-sm resize-none bg-gray-100"></textarea>
                         <span class="text-sm text-red-500">{{ errors.descripcion }}</span>
                     </div>
-                    <input id="imagen" name="imagen" type="file" accept="image/*" @change="handleFileChange"
+                    <input id="imagen" name="imagen" type="file" accept="image/* " @change="onFileChange"
                         class="w-full p-3 rounded-md text-gray-800 text-sm bg-gray-100" />
                     <span class="text-sm text-red-500">{{ errors.imagen }}</span>
 

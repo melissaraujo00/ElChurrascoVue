@@ -10,7 +10,6 @@ const {
   deleteItem, 
   searchKeys, 
   addButtonText, 
-  renderImage, 
   showDelete 
 } = defineProps({
   title: String,

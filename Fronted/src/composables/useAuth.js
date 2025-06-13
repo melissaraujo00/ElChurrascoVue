@@ -78,13 +78,16 @@ const logout = async () => {
 
     if (response.ok) {
       clearAuthState()
-      router.push({ name: 'Menu' }).then(() => {
-        router.go(0)
-      })
+      
+      // Recargar el estado global del carrito (si es necesario)
+      const { useCart } = await import('@/composables/useCart.js')
+      const { clearCart } = useCart()
+      clearCart?.() // limpia el carrito si existe esa función
 
+      // Redirigir a Menu sin recargar toda la página
+      router.push({ name: 'Menu' })
       return true
     } else {
-      // Verificar si la respuesta es JSON antes de parsear
       const contentType = response.headers.get('content-type')
       if (contentType && contentType.includes('application/json')) {
         const errorData = await response.json()
@@ -100,6 +103,7 @@ const logout = async () => {
     return false
   }
 }
+
 
 
   // Función para iniciar sesión (usando token directamente)

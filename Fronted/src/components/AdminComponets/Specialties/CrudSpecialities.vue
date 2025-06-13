@@ -5,6 +5,7 @@ import SpecialtyForm from './SpecialtyForm.vue';
 import { ref } from 'vue';
 
 const API_URL = import.meta.env.VITE_API_URL;
+const crudTableRef = ref(null);
 const showModal = ref(false);
 const selected = ref(null);
 
@@ -19,45 +20,60 @@ function closeModal() {
 }
 
 async function fetchSpecialties() {
-  const res = await fetch(`${API_URL}/specialty`);
-  return await res.json();
+  try{
+    const res = await fetch(`${API_URL}/specialty`);
+    return await res.json();
+  }
+  catch(error){
+    res.status(500).json({error: 'error al obtener los datos'})
+  }
+  
 }
 
 function editSpecialty(s) {
   selected.value = { ...s };
   showModal.value = true;
 }
+async function deleteSpecialty(specialty) {
+  if (!confirm(`¿Está seguro que desea eliminar la especialidad"?`)) {
+    return;
+  }
+  try {
+    const res = await fetch(`${API_URL}/specialty/${specialty._id}`, {
+      method: 'DELETE',
+    });
+
+    if (!res.ok) throw new Error('Error al eliminar');
+
+    crudTableRef.value?.loadData();
+  } catch (error) {
+    res.status(500).json({error: 'error al obtener los datos'})
+  }
+}
 
 function renderImage(path) {
   return `${API_URL}/${path}`;
 }
+function onSaved() {
+  crudTableRef.value?.loadData();
+  closeModal();
+}
 </script>
 
 <template>
-  <CrudTable
-    title="Gestión de Especialidades"
-    :columns="[
-      { label: 'Nombre', key: 'nombre' },
-      { label: 'Descripción', key: 'descripcion' },
-      { label: 'Imagen', key: 'imagen' },
-      { label: 'Tipo', key: 'type' }
-    ]"
-    :fetchData="fetchSpecialties"
-    :editItem="editSpecialty"
-    :searchKeys="['nombre', 'descripcion', 'type']"
-    :renderImage="renderImage"
-    :showDelete="true"
-    @open-modal="openModal"
-  />
+  <CrudTable ref="crudTableRef" title="Gestión de Especialidades" :columns="[
+    { label: 'Nombre', key: 'nombre' },
+    { label: 'Descripción', key: 'descripcion' },
+    { label: 'Imagen', key: 'imagen' },
+    { label: 'Tipo', key: 'type' }
+  ]" :fetchData="fetchSpecialties" :editItem="editSpecialty" :deleteItem="deleteSpecialty"
+    :searchKeys="['nombre', 'descripcion', 'type']" :renderImage="renderImage" :showDelete="true"
+    @open-modal="openModal" />
 
   <div v-if="showModal" class="fixed inset-0 flex justify-center items-center z-50">
     <button @click="closeModal" class="absolute top-3 right-3 text-gray-600 hover:text-gray-900 font-bold text-xl">
       &times;
     </button>
-    <SpecialtyForm
-      :initialData="selected"
-      @close="closeModal"
-      @saved="() => { closeModal(); }"
-    />
+    <SpecialtyForm :initialData="selected" @close="closeModal" @saved="onSaved" />
   </div>
 </template>

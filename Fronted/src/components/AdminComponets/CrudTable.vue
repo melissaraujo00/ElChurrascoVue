@@ -50,6 +50,7 @@ async function loadData() {
 }
 
 onMounted(loadData);
+defineExpose({ loadData });
 
 const filteredItems = computed(() => {
   if (!searchText.value.trim()) return items.value;

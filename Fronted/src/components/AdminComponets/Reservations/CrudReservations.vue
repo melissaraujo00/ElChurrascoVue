@@ -4,6 +4,7 @@ import CrudTable from '@/components/AdminComponets/CrudTable.vue';
 import ReservationForm from './ReservationForm.vue';
 import { ref } from 'vue';
 
+const crudTableRef = ref(null);
 const API_URL = import.meta.env.VITE_API_URL;
 const showModal = ref(false);
 const selected = ref(null);
@@ -27,10 +28,17 @@ function editReservation(r) {
   selected.value = { ...r };
   showModal.value = true;
 }
+
+function onSaved() {
+  crudTableRef.value?.loadData();
+  closeModal();
+}
+
 </script>
 
 <template>
   <CrudTable
+    ref="crudTableRef"
     title="Gestión de Reservaciones"
     :columns="[
       { label: 'Nombre', key: 'nombre' },
@@ -54,7 +62,7 @@ function editReservation(r) {
     <ReservationForm
       :initialData="selected"
       @close="closeModal"
-      @saved="() => { closeModal(); }"
+      @saved="onSaved"  
     />
   </div>
 </template>

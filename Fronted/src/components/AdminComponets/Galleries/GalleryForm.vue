@@ -123,10 +123,18 @@ const onSubmit = handleSubmit(async (formValues) => {
             <span class="text-sm text-red-500">{{ errors.imagen }}</span>
           </div>
 
-          <button type="submit"
-            class="w-full py-2 bg-black text-white rounded-md hover:bg-amber-400 transition duration-300 text-lg font-semibold">
-            {{ initialData && initialData._id ? 'Actualizar' : 'Guardar' }}
-          </button>
+         <div class="flex gap-4">
+            <button type="submit"
+              class="w-1/2 py-2 bg-black text-white rounded-md hover:bg-gray-700 transition duration-300 text-lg font-semibold">
+              {{ initialData && initialData._id ? 'Actualizar' : 'Guardar' }}
+            </button>
+
+            <button type="button" @click="emit('cancel')"
+              class="w-1/2 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400 transition duration-300 text-lg font-semibold">
+              Cancelar
+            </button>
+
+          </div>
         </form>
       </div>
     </div>

@@ -100,6 +100,6 @@ function onSaved() {
     >
       &times;
     </button>
-    <GalleryForm :initialData="selected" @close="closeModal" @saved="onSaved" />
+    <GalleryForm :initialData="selected" @cancel="closeModal" @saved="onSaved" />
   </div>
 </template>

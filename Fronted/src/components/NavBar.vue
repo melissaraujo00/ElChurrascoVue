@@ -24,6 +24,7 @@ const menus = {
     { label: 'Reservaciones', path: 'CrudReservations'},
     { label: 'Platillos', path: 'CrudDishes'},
     { label: 'Eventos', path: 'CrudGalleries'},
+    { label: 'Pedidos', path: 'CrudOrders'},
   ],
   user: [
     { label: 'Inicio', path: 'Home' },

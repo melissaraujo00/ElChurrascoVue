@@ -86,7 +86,10 @@ const validateForm = () => {
 onMounted(async () => {
   const isAuth = await checkAuthStatus()
   if (isAuth) {
-    router.push({ name: 'Home' })
+    router.push({ name: 'Home' }).then(() => {
+  window.location.reload()
+})
+
   }
 })
 
@@ -105,13 +108,19 @@ const handleSubmit = async () => {
     })
 
     const token = res.data.token
-    if (token) login(token) // <-- usar login del composable
+    if (token) await login(token)  // Aquí la recarga se dispara dentro de login()
 
-    await router.push({ name: 'Home' })
+    // Esta línea no hará mucho porque ya recargaste la página
+    await router.push({ name: 'Home' }).then(() => {
+  window.location.reload()
+})
+
   } catch (err) {
     generalError.value = err.response?.data?.message || 'Ocurrió un error inesperado'
   }
 }
+
+
 </script>
 
 <template>

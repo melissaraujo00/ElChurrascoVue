@@ -17,7 +17,6 @@ export function useAuth() {
     try {
       const response = await fetch(`${API_URL}/login/profile`, {
         credentials: 'include'
-        
       })
       
       if (response.ok) {
@@ -25,6 +24,10 @@ export function useAuth() {
         isAuthenticated.value = true
         user.value = data
         userRole.value = data.roles || 'user'
+        
+        // Después de verificar autenticación, cargar carrito del usuario
+        await loadUserCartOnAuth()
+        
         return data
       } else {
         // Si la respuesta no es ok, limpiar el estado
@@ -38,12 +41,30 @@ export function useAuth() {
     }
   }
 
+  // Función para cargar carrito cuando se autentica
+  const loadUserCartOnAuth = async () => {
+    try {
+      // Importar dinámicamente para evitar dependencias circulares
+      const { useCart } = await import('@/composables/useCart.js')
+      const { loadUserCart, migrateTemporaryCart } = useCart()
+      
+      // Migrar carrito temporal si existe
+      migrateTemporaryCart()
+      
+      // Cargar carrito del usuario
+      loadUserCart()
+    } catch (error) {
+      console.log('Error al cargar carrito del usuario:', error)
+    }
+  }
+
   // Función para limpiar el estado de autenticación
   const clearAuthState = () => {
     isAuthenticated.value = false
     user.value = null
     userRole.value = 'user'
-    // Limpiar también el localStorage del carrito si es necesario
+    
+    // Ya no limpiar TODO el localStorage, solo el carrito genérico
     localStorage.removeItem('cart')
   }
 
@@ -56,7 +77,9 @@ export function useAuth() {
       })
       
       if (response.ok) {
+        // El carrito del usuario se mantiene en localStorage con su clave única
         clearAuthState()
+        window.location.href = '/cart' 
         router.push({ name: 'Menu' })
         return true
       } else {
@@ -70,29 +93,12 @@ export function useAuth() {
     }
   }
 
-  // Función para iniciar sesión
-  const login = async (credentials) => {
-    try {
-      const response = await fetch(`${API_URL}/login/signin`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(credentials),
-        credentials: 'include'
-      })
-
-      if (response.ok) {
-        // Verificar el estado después del login exitoso
-        await checkAuthStatus()
-        return { success: true }
-      } else {
-        const errorData = await response.json()
-        return { success: false, message: errorData.message }
-      }
-    } catch (error) {
-      console.error('Error al iniciar sesión:', error)
-      return { success: false, message: 'Error de conexión' }
+  // Función para iniciar sesión (usando token directamente)
+  const login = (token) => {
+    if (token) {
+      // Aquí podrías guardar el token si lo necesitas
+      // Para este caso, simplemente verificamos el estado
+      checkAuthStatus()
     }
   }
 

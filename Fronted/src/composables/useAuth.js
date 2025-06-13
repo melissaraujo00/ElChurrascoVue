@@ -69,29 +69,36 @@ export function useAuth() {
   }
 
   // Función para cerrar sesión
-  const logout = async () => {
-    try {
-      const response = await fetch(`${API_URL}/login/logout`, {
-        method: 'POST',
-        credentials: 'include'
-      })
-      
-      if (response.ok) {
-        // El carrito del usuario se mantiene en localStorage con su clave única
-        clearAuthState()
-        window.location.href = '/menu' 
-        router.push({ name: 'Menu' })
-        return true
-      } else {
+const logout = async () => {
+  try {
+    const response = await fetch(`${API_URL}/login/logout`, {
+      method: 'POST',
+      credentials: 'include'
+    })
+
+    if (response.ok) {
+      clearAuthState()
+      window.location.href = '/menu' 
+      router.push({ name: 'Menu' })
+      return true
+    } else {
+      // Verificar si la respuesta es JSON antes de parsear
+      const contentType = response.headers.get('content-type')
+      if (contentType && contentType.includes('application/json')) {
         const errorData = await response.json()
         console.error('Error al cerrar sesión:', errorData.message)
-        return false
+      } else {
+        const errorText = await response.text()
+        console.error('Respuesta inesperada al cerrar sesión:', errorText)
       }
-    } catch (error) {
-      console.error('Error al cerrar sesión:', error)
       return false
     }
+  } catch (error) {
+    console.error('Error al cerrar sesión:', error)
+    return false
   }
+}
+
 
   // Función para iniciar sesión (usando token directamente)
   const login = (token) => {

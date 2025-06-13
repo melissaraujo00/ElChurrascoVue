@@ -28,7 +28,7 @@ onMounted(async () => {
 async function guardarCambios() {
   try {
     await updateProfile(form.value)
-    router.push({ name: 'Home' })
+    await router.push({ name: 'Home' })
   } catch (e) {
     alert('No se pudo actualizar el perfil.')
   }

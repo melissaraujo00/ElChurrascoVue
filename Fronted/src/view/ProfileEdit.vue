@@ -29,6 +29,7 @@ async function guardarCambios() {
   try {
     await updateProfile(form.value)
     await router.push({ name: 'Home' })
+    window.location.reload()
   } catch (e) {
     alert('No se pudo actualizar el perfil.')
   }

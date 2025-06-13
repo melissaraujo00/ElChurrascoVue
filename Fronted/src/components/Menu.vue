@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from "vue"
 import { useRouter } from "vue-router"
 import AddToCartModal from '@/components/AddToCartModal.vue'
 import { useAuth } from '@/composables/useAuth.js' // Importar el composable
+import { useCart } from '@/composables/useCart.js' // Importar el nuevo composable
 import axios from 'axios'
 
 const API_URL = import.meta.env.VITE_API_URL
@@ -10,6 +11,7 @@ const router = useRouter()
 
 // Usar el composable de autenticación
 const { isAuthenticated, user, checkAuthStatus } = useAuth()
+const { addToCart: addToCartComposable } = useCart()
 
 const dishes = ref([])
 const loading = ref(true)
@@ -83,53 +85,40 @@ const updateQuantity = (newQuantity) => {
 }
 
 const addToCart = () => {
-    // Si no está autenticado, mostrar notificación pero no agregar al carrito
-    if (!isAuthenticated.value) {
-        showNotification.value = true
-        notificationMessage.value = 'Debes iniciar sesión para agregar productos al carrito'
-        notificationType.value = 'error'
-        setTimeout(() => {
-            showNotification.value = false
-        }, 4000)
-        return
-    }
+  // Si no está autenticado, mostrar notificación
+  if (!isAuthenticated.value) {
+    showNotification.value = true
+    notificationMessage.value = 'Debes iniciar sesión para agregar productos al carrito'
+    notificationType.value = 'error'
+    setTimeout(() => {
+      showNotification.value = false
+    }, 4000)
+    return
+  }
 
-    if (selectedDish.value) {
-        const cartItem = {
-            id: selectedDish.value._id,
-            nombre: selectedDish.value.nombre,
-            precio: selectedDish.value.precio,
-            imagen: selectedDish.value.imagen,
-            cantidad: quantity.value,
-            total: selectedDish.value.precio * quantity.value
-        }
-        try {
-            // Obtener carrito existente
-            const existingCart = JSON.parse(localStorage.getItem('cart') || '[]')
-            const existingItemIndex = existingCart.findIndex(item => item.id === cartItem.id)
-            
-            if (existingItemIndex > -1) {
-                // Si el item ya existe, actualizar cantidad y total
-                existingCart[existingItemIndex].cantidad += cartItem.cantidad
-                existingCart[existingItemIndex].total = existingCart[existingItemIndex].precio * existingCart[existingItemIndex].cantidad
-            } else {
-                // Si es un item nuevo, agregarlo al carrito
-                existingCart.push(cartItem)
-            }
-            
-            // Guardar carrito actualizado
-            localStorage.setItem('cart', JSON.stringify(existingCart))
-            
-            // Mostrar notificación de éxito
-            showSuccessNotification(`${cartItem.nombre} agregado al carrito!`, 'success')
-            
-            // Cerrar modal
-            closeModal()
-        } catch (error) {
-            console.error('Error al agregar al carrito:', error)
-            showSuccessNotification('Error al agregar al carrito', 'error')
-        }
+  if (selectedDish.value) {
+    const cartItem = {
+      id: selectedDish.value._id,
+      nombre: selectedDish.value.nombre,
+      precio: selectedDish.value.precio,
+      imagen: selectedDish.value.imagen,
+      cantidad: quantity.value
     }
+    
+    try {
+      // Usar el composable en lugar de manejar localStorage directamente
+      addToCartComposable(cartItem)
+      
+      // Mostrar notificación de éxito
+      showSuccessNotification(`${cartItem.nombre} agregado al carrito!`, 'success')
+      
+      // Cerrar modal
+      closeModal()
+    } catch (error) {
+      console.error('Error al agregar al carrito:', error)
+      showSuccessNotification(error.message || 'Error al agregar al carrito', 'error')
+    }
+  }
 }
 
 const showSuccessNotification = (message, type = 'success') => {

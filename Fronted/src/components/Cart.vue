@@ -1,13 +1,16 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { useAuth } from '@/composables/useAuth.js'
+import { useCart } from '@/composables/useCart.js'
 import axios from 'axios'
+
 const API_URL = import.meta.env.VITE_API_URL
 
-const cartItems = ref([])
-const user = ref(null)
-const isAuthenticated = ref(false)
-const showModal = ref(false)
+// Usar composables
+const { isAuthenticated, user, checkAuthStatus } = useAuth()
+const { cartItems, cartTotal, removeFromCart, loadUserCart, clearCart } = useCart()
 
+const showModal = ref(false)
 const showNotification = ref(false)
 const notificationMessage = ref('')
 const notificationType = ref('success')
@@ -18,37 +21,6 @@ const deliveryForm = ref({
     contacto: '',
     indicaciones: ''
 })
-
-const loadCart = () => {
-    const storedCart = JSON.parse(localStorage.getItem('cart') || '[]')
-    cartItems.value = storedCart
-}
-
-const checkAuthStatus = async () => {
-    try {
-        const response = await axios.get(`${API_URL}/login/profile`, {
-            withCredentials: true
-        })
-
-        if (response.data) {
-            isAuthenticated.value = true
-            user.value = response.data
-        }
-    } catch (error) {
-        console.log('Usuario no autenticado:', error)
-        isAuthenticated.value = false
-        user.value = null
-    }
-}
-
-const totalCarrito = computed(() => {
-    return cartItems.value.reduce((acc, item) => acc + item.total, 0)
-})
-
-const removeFromCart = (id) => {
-    cartItems.value = cartItems.value.filter(item => item.id !== id)
-    localStorage.setItem('cart', JSON.stringify(cartItems.value))
-}
 
 const openModal = () => {
     showModal.value = true
@@ -64,7 +36,7 @@ const closeModal = () => {
     }
 }
 
- const showSuccessNotification = (message, type = 'success') => {
+const showSuccessNotification = (message, type = 'success') => {
     notificationMessage.value = message
     notificationType.value = type
     showNotification.value = true
@@ -76,13 +48,19 @@ const closeModal = () => {
 const procesarCompra = async () => {
     // Validar que todos los campos requeridos estén llenos
     if (!deliveryForm.value.direccion || !deliveryForm.value.contacto) {
-        alert('Por favor, completa todos los campos requeridos.')
+        showSuccessNotification('Por favor, completa todos los campos requeridos.', 'error')
         return
     }
 
     // Validar que el usuario esté autenticado
     if (!isAuthenticated.value || !user.value) {
-        alert('Debes iniciar sesión para realizar una compra.')
+        showSuccessNotification('Debes iniciar sesión para realizar una compra.', 'error')
+        return
+    }
+
+    // Validar que hay items en el carrito
+    if (cartItems.value.length === 0) {
+        showSuccessNotification('Tu carrito está vacío.', 'error')
         return
     }
 
@@ -102,10 +80,9 @@ const procesarCompra = async () => {
             },
             carrito: carritoFormateado,
             direccion: deliveryForm.value.direccion,
-            total: totalCarrito.value,
+            total: cartTotal.value,
             indicaciones: deliveryForm.value.indicaciones,
             contacto: deliveryForm.value.contacto
-
         }
 
         console.log('Enviando pedido:', pedidoData)
@@ -118,9 +95,8 @@ const procesarCompra = async () => {
             }
         })
 
-
-        cartItems.value = []
-        localStorage.removeItem('cart')
+        // Limpiar carrito usando el composable
+        clearCart()
         
         // Cerrar modal
         closeModal()
@@ -131,19 +107,20 @@ const procesarCompra = async () => {
 
         // Mostrar mensaje de error más específico
         if (error.response) {
-            alert(`Error del servidor: ${error.response.data.message || 'Error desconocido'}`)
+            showSuccessNotification(`Error del servidor: ${error.response.data.message || 'Error desconocido'}`, 'error')
         } else if (error.request) {
-            alert('No se pudo conectar con el servidor. Verifica tu conexión.')
+            showSuccessNotification('No se pudo conectar con el servidor. Verifica tu conexión.', 'error')
         } else {
-            alert('Error al procesar el pedido. Inténtalo de nuevo.')
+            showSuccessNotification('Error al procesar el pedido. Inténtalo de nuevo.', 'error')
         }
     }
-
 }
 
 onMounted(async () => {
-    loadCart()
     await checkAuthStatus()
+    if (isAuthenticated.value) {
+        loadUserCart() // Cargar carrito del usuario autenticado
+    }
 })
 </script>
 
@@ -175,7 +152,7 @@ onMounted(async () => {
             </div>
 
             <div class="text-right text-xl font-bold mt-6">
-                <h1> Total a pagar: ${{ totalCarrito.toFixed(2) }}</h1>
+                <h1> Total a pagar: ${{ cartTotal.toFixed(2) }}</h1>
 
                 <button @click="openModal" class="bg-gray-600 hover:bg-gray-700 px-3 rounded transition-colors my-3">
                     Comprar
@@ -200,7 +177,6 @@ onMounted(async () => {
                 </svg>
                 {{ notificationMessage }}
             </div>
-           
         </div>
 
         <!-- Modal de información de entrega -->
@@ -240,7 +216,7 @@ onMounted(async () => {
                     </div>
 
                     <div class="bg-gray-700 p-3 rounded-md">
-                        <p class="text-xl font-bold text-white">Total: ${{ totalCarrito.toFixed(2) }}</p>
+                        <p class="text-xl font-bold text-white">Total: ${{ cartTotal.toFixed(2) }}</p>
                     </div>
 
                     <div class="flex gap-3 pt-4">

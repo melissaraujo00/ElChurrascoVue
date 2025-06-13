@@ -76,6 +76,6 @@ function onSaved() {
     <button @click="closeModal" class="absolute top-3 right-3 text-gray-600 hover:text-gray-900 font-bold text-xl">
       &times;
     </button>
-    <SpecialtyForm :initialData="selected" @close="closeModal" @saved="onSaved" />
+    <SpecialtyForm :initialData="selected" @cancel="closeModal" @saved="onSaved" />
   </div>
 </template>

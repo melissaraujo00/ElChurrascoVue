@@ -60,9 +60,9 @@ const onSubmit = handleSubmit(async (formValues) => {
     const isEdit = props.initialData && props.initialData._id;
     const url = `${API_URL}/gallery${isEdit ? `/${props.initialData._id}` : ''}`;
     const method = isEdit ? 'PUT' : 'POST';
-    
+
     const formData = new FormData();
-     for (const key in formValues) {
+    for (const key in formValues) {
       if (key !== 'imagen') {
         formData.append(key, formValues[key]);
       }
@@ -72,7 +72,7 @@ const onSubmit = handleSubmit(async (formValues) => {
     if (imagenFile.value) {
       formData.append('imagen', imagenFile.value);
     }
-    
+
 
     const res = await fetch(url, {
       method,
@@ -96,15 +96,14 @@ const onSubmit = handleSubmit(async (formValues) => {
 <template>
   <div class="relative w-full col-span-2 overflow-hidden h-[600px]">
     <div class="absolute inset-0 flex flex-col items-center justify-center m-3 px-4">
-      <div class="p-8 bg-white rounded-xl w-full max-w-[600px] h-[600px] flex flex-col shadow-xl overflow-auto">
+      <div class="p-8 bg-white rounded-xl w-full max-w-[600px] h-[600px] flex flex-col shadow-xl ">
         <h2 class="text-3xl text-black font-bold mb-6 mt-3 text-center">
           {{ initialData && initialData._id ? 'Editar Galería' : 'Agregar Galería' }}
         </h2>
         <form @submit.prevent="onSubmit" class="w-full flex flex-col gap-6">
           <div>
             <label for="title" class="block text-black mb-1 font-semibold">Título</label>
-            <input v-model="title" id="title" name="title" type="text"
-              placeholder="Ingrese el título"
+            <input v-model="title" id="title" name="title" type="text" placeholder="Ingrese el título"
               class="w-full p-3 rounded-md text-gray-800 text-sm bg-gray-100" />
             <span class="text-sm text-red-500">{{ errors.title }}</span>
           </div>
@@ -119,8 +118,7 @@ const onSubmit = handleSubmit(async (formValues) => {
 
           <div>
             <label for="imagen" class="block text-black mb-1 font-semibold">Imagen</label>
-            <input id="imagen" name="imagen" type="file" accept="image/*"
-              @change="onFileChange"
+            <input id="imagen" name="imagen" type="file" accept="image/*" @change="onFileChange"
               class="w-full p-3 rounded-md text-gray-800 text-sm bg-gray-100" />
             <span class="text-sm text-red-500">{{ errors.imagen }}</span>
           </div>

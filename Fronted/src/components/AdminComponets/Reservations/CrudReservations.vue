@@ -61,7 +61,7 @@ function onSaved() {
     </button>
     <ReservationForm
       :initialData="selected"
-      @close="closeModal"
+      @cancel="closeModal"
       @saved="onSaved"  
     />
   </div>

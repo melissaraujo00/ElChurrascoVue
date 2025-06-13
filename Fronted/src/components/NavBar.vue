@@ -96,7 +96,7 @@ onMounted(async () => {
               {{ user?.name || 'Usuario' }}<br />
               <small class="text-gray-600">{{ user?.email || '' }}</small>
             </p>
-            <router-link to="/perfil" class="block px-4 py-2 hover:bg-gray-200" @click="closeUserMenu">
+            <router-link :to=" {name: 'Profile'}" class="block px-4 py-2 hover:bg-gray-200" @click="closeUserMenu">
               Editar perfil
             </router-link>
             <button @click="handleLogout" class="block w-full text-left px-4 py-2 hover:bg-gray-200">Cerrar sesión</button>

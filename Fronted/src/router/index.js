@@ -2,18 +2,21 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuth } from '@/composables/useAuth' // <-- importante
 
 // Importa tus componentes
-import Home from '../components/Home.vue'
-import Menu from '../components/Menu.vue'
-import Reserve from '../components/Reserve.vue'
-import Events from '../components/Events.vue'
-import Register from '../components/Register.vue'
-import Login from '../components/Login.vue'
-import Cart from '../components/Cart.vue'
-import Users from '@/components/AdminComponets/user/Users.vue'
-import UserCreate from '@/components/AdminComponets/user/ModalCrearUsuario.vue'
-import CrudSpecialities from "@/components/AdminComponets/Specialties/CrudSpecialities.vue"
-import CrudReservations from "@/components/AdminComponets/Reservations/CrudReservations.vue"
+import Home from '../components/Home.vue';
+import Menu from '../components/Menu.vue';
+import Reserve from '../components/Reserve.vue';
+import Events from '../components/Events.vue';
+import Register from '../components/Register.vue';
+import Login from '../components/Login.vue';
+import Cart from '../components/Cart.vue';
+import Users from '@/components/AdminComponets/user/Users.vue';
+import UserCreate from '@/components/AdminComponets/user/ModalCrearUsuario.vue';
+import CrudSpecialities from "@/components/AdminComponets/Specialties/CrudSpecialities.vue";
+import CrudReservations from "@/components/AdminComponets/Reservations/CrudReservations.vue";
 import CrudDishes  from "@/components/AdminComponets/Dishes/CrudDishes.vue";
+import Profile from '@/components/Profile.vue';
+import ProfileEdit from '../view/ProfileEdit.vue';   
+
 
 
 const routes = [
@@ -24,6 +27,8 @@ const routes = [
   { path: '/register', component: Register, name: 'Register' },
   { path: '/login', component: Login, name: 'Login' },
   { path: '/cart', component: Cart, name: 'Cart' },
+  { path: '/profile', component: Profile, name: 'Profile', meta: { requiresAuth: true } },
+  { path: '/profile/edit', component: ProfileEdit, name: 'ProfileEdit', meta: { requiresAuth: true } },
   { path: '/user', component: Users, name: 'User', meta: { requiresAuth: true, role: 'admin' } },
   { path: '/user/create', component: UserCreate, name: 'UserCreate', meta: { requiresAuth: true, role: 'admin' } },
   { path: '/CrudSpecialities', component: CrudSpecialities, name: 'CrudSpecialities', meta: { requiresAuth: true, role: 'admin' } },

@@ -23,9 +23,9 @@ async function fetchOrders() {
     const res = await fetch(`${API_URL}/orders`, {
       method: 'GET',
       credentials: 'include',
-      Authorization: `Bearer ${token}`,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       }
     });
 
@@ -49,9 +49,7 @@ async function fetchOrders() {
       }).filter(str => str).join('\n') || ''
     }));
 
-
     return ordersFlattened;
-
 
   } catch (error) {
     console.error('Error al hacer fetch:', error);
@@ -70,6 +68,10 @@ async function cambiarEstado(item) {
 
   if (siguienteEstado === item.estado) return;
 
+  // Confirmación antes de cambiar
+  const confirmar = window.confirm(`¿Estás seguro de cambiar el estado de "${item.clienteName}" de "${item.estado}" a "${siguienteEstado}"?`);
+  if (!confirmar) return;
+
   try {
     const response = await fetch(`${API_URL}/orders/${item._id}/estado`, {
       method: 'PATCH',
@@ -86,13 +88,38 @@ async function cambiarEstado(item) {
       throw new Error(errorData.error || 'Error al actualizar el estado');
     }
 
-
     item.estado = siguienteEstado;
   } catch (error) {
     console.error('Error al cambiar estado:', error.message);
   }
 }
 
+
+async function eliminarPedido(item) {
+  const confirmar = window.confirm(`¿Estás seguro de eliminar el pedido de ${item.clienteName}?`);
+  if (!confirmar) return;
+
+  try {
+    const response = await fetch(`${API_URL}/orders/${item._id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Error al eliminar el pedido');
+    }
+
+    // Recargar la tabla
+    crudTableRef.value?.loadData();
+
+  } catch (error) {
+    console.error('Error al eliminar pedido:', error.message);
+  }
+}
 
 function onSaved() {
   crudTableRef.value?.loadData();
@@ -101,17 +128,26 @@ function onSaved() {
 </script>
 
 <template>
-  <CrudTable ref="crudTableRef" title="Gestión de Pedidos" :columns="[
-    { label: 'Cliente', key: 'clienteName' },
-    { label: 'Contacto', key: 'contacto' },
-    { label: 'Dirección', key: 'direccion' },
-    { label: 'Pedido', key: 'pedido' },
-    { label: 'Total ($)', key: 'total' },
-    { label: 'Indicaciones', key: 'indicaciones' },
-    { label: 'Estado', key: 'estado' },
-    { label: 'Fecha', key: 'createdAt' }
-  ]" :fetchData="fetchOrders" :statusItem="cambiarEstado"
-    :searchKeys="['clienteName', 'direccion', 'contacto', 'platosNombres']" :showDelete="true" :showAddButton="false"
-    :showStatus="true" @open-modal="openModal" />
-
+  <CrudTable 
+    ref="crudTableRef" 
+    title="Gestión de Pedidos" 
+    :columns="[
+      { label: 'Cliente', key: 'clienteName' },
+      { label: 'Contacto', key: 'contacto' },
+      { label: 'Dirección', key: 'direccion' },
+      { label: 'Pedido', key: 'pedido' },
+      { label: 'Total ($)', key: 'total' },
+      { label: 'Indicaciones', key: 'indicaciones' },
+      { label: 'Estado', key: 'estado' },
+      { label: 'Fecha', key: 'createdAt' }
+    ]" 
+    :fetchData="fetchOrders" 
+    :statusItem="cambiarEstado"
+    :deleteItem="eliminarPedido"
+    :searchKeys="['clienteName', 'direccion', 'contacto', 'platosNombres']" 
+    :showDelete="true" 
+    :showAddButton="false"
+    :showStatus="true" 
+    @open-modal="openModal" 
+  />
 </template>

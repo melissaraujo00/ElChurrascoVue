@@ -62,7 +62,7 @@ router.beforeEach(async (to, from, next) => {
 
     // Verifica rol si es necesario
     if (to.meta.role && userRole.value !== to.meta.role) {
-      return next({ name: 'Menu' }) // o la ruta que quieras para usuarios sin permiso
+      return next({ name: 'Home' }) // o la ruta que quieras para usuarios sin permiso
     }
   }
 

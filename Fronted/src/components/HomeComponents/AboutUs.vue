@@ -13,7 +13,7 @@ const images = ref([
 
   <section class="flex flex-col md:flex-row gap-4 p-4 bg-neutral-950">
     <!-- Galería de imágenes a la izquierda, en grid 2x2 en desktop -->
-    <div class="p-3 m-2 w-full md:w-[55%] lg:w-[45%] shadow-md transition-transform duration-300 hover:scale-105">
+    <div class="p-3 m-2 w-full md:w-[55%] lg:w-[45%] shadow-md shadow-white transition-transform duration-300 hover:scale-105">
       <div class="grid grid-cols-2 grid-rows-2 gap-4 h-full">
         <img
           v-for="(img, index) in images"

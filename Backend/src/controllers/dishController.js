@@ -108,9 +108,13 @@ export const deleteDish = [
       const dish = await Dish.findById(req.params.id);
       if (!dish) return res.status(404).json({ error: 'Plato no encontrado' });
 
+      // Ruta absoluta a la imagen
       try {
-        if (dish.imagen && fs.existsSync(dish.imagen)) {
-          fs.unlinkSync(dish.imagen);
+        if (dish.imagen && !dish.imagen.startsWith('http')) {
+          const imagePath = path.join(__dirname, '..', 'uploads', dish.imagen); // Ajusta esto a tu carpeta real
+          if (fs.existsSync(imagePath)) {
+            fs.unlinkSync(imagePath);
+          }
         }
       } catch (err) {
         console.error('Error al eliminar la imagen:', err.message);
@@ -119,8 +123,8 @@ export const deleteDish = [
       await Dish.findByIdAndDelete(req.params.id);
       res.status(200).json({ message: 'Plato eliminado correctamente' });
     } catch (error) {
+      console.error('Error al eliminar el plato:', error.message);
       res.status(500).json({ error: error.message });
     }
   }
 ];
-

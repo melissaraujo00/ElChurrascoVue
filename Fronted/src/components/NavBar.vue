@@ -25,8 +25,11 @@ const menus = {
     { label: 'Eventos', path: 'Events' },
     { label: 'Usuarios', path: 'User' },
     { label: 'Especialidades', path: 'CrudSpecialities' },
-    { label: 'Reservaciones', path: 'CrudReservations' },
-    { label: 'Platillos', path: 'CrudDishes' }
+
+    { label: 'Reservaciones', path: 'CrudReservations'},
+    { label: 'Platillos', path: 'CrudDishes'},
+    { label: 'Eventos', path: 'CrudGalleries'},
+    { label: 'Pedidos', path: 'CrudOrders'},
   ],
   user: [
     { label: 'Inicio', path: 'Home' },

@@ -3,11 +3,14 @@ import { useForm, useField } from 'vee-validate';
 import * as yup from 'yup';
 import { watch } from 'vue';
 import axios from 'axios';
+import { useToast } from 'vue-toastification';
+
+const toast = useToast();
 
 const props = defineProps({
   initialData: {
     type: Object,
-    default: () => ({}), 
+    default: () => ({}),
   }
 });
 const emit = defineEmits(['saved', 'cancel']);
@@ -16,8 +19,17 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 const validationSchema = yup.object({
   name: yup.string().required('El nombre es obligatorio').matches(/^[a-zA-Z\s]+$/, 'Solo se permiten letras y espacios'),
-  peopleCount: yup.number().required('Este campo es obligatorio').min(1, 'Debe ser al menos 1 persona'),
-  date: yup.date().required('La fecha es obligatoria').min(new Date(), 'La fecha debe ser futura'),
+  peopleCount: yup
+    .number()
+    .transform((curr, orig) => orig === '' ? null : curr)
+    .required('La cantidad de personas es obligatoria')
+    .positive('Debe ser un número positivo')
+    .integer('Debe ser un número entero'),
+  date: yup
+    .date()
+    .transform((curr, orig) => orig === '' ? null : curr)
+    .required('La fecha es obligatoria')
+    .min(new Date(), 'La fecha debe ser futura'),
   hour: yup.string().required('La hora es obligatoria'),
   contactEmail: yup.string().required('El contacto es obligatorio').email('Debe ser un correo válido'),
   additionalInfo: yup.string().nullable()
@@ -75,7 +87,7 @@ const onSubmit = handleSubmit(async (formValues) => {
         contactos: formValues.contactEmail,
         datosAdicionales: formValues.additionalInfo
       });
-      alert(response.data.message || 'Reservación actualizada correctamente');
+      toast.success('Reservacion actualizada correctamente');
     } else {
       const response = await axios.post(`${API_URL}/reservations`, {
         nombre: formValues.name,
@@ -85,7 +97,7 @@ const onSubmit = handleSubmit(async (formValues) => {
         contactos: formValues.contactEmail,
         datosAdicionales: formValues.additionalInfo
       });
-      alert(response.data.message || 'Reservación creada correctamente');
+      toast.success('Reservacion guardada correctamente');
     }
 
     emit('saved');
@@ -96,11 +108,11 @@ const onSubmit = handleSubmit(async (formValues) => {
 });
 </script>
 <template>
-  <div class="relative w-full col-span-2 overflow-hidden h-[800px]">
+  <div class="relative w-full col-span-2 overflow-hidden h-[800px] rounded-2xl">
     <div class="absolute inset-0 flex flex-col items-center justify-center m-3 px-4">
       <div class="p-8 bg-white rounded-xl w-full max-w-[690px] h-auto flex flex-col shadow-xl mx-4 sm:mx-5">
-        <h2 class="text-5xl text-black font-bold mb-8 mt-5 text-center">
-          {{ initialData && initialData._id ? 'Editar Reservación' : 'Haz tu Reservación' }}
+        <h2 class="text-3xl text-black font-bold mb-8 mt-5 text-center">
+          {{ initialData && initialData._id ? 'Editar Reservación' : 'Agregar Reservación' }}
         </h2>
         <form @submit.prevent="onSubmit" class="w-full flex flex-col gap-6">
           <div>
@@ -134,8 +146,8 @@ const onSubmit = handleSubmit(async (formValues) => {
 
           <div>
             <label for="contactEmail" class="block text-black mb-1 font-semibold">Contacto</label>
-            <input v-model="contactEmail" id="contactEmail" name="contactEmail" type="text" placeholder="ejemplo@ejemplo.com"
-              class="w-full p-3 rounded-md text-gray-800 text-sm bg-gray-100" />
+            <input v-model="contactEmail" id="contactEmail" name="contactEmail" type="text"
+              placeholder="ejemplo@ejemplo.com" class="w-full p-3 rounded-md text-gray-800 text-sm bg-gray-100" />
             <span class="text-sm text-red-500">{{ errors.contactEmail }}</span>
           </div>
 
@@ -145,10 +157,18 @@ const onSubmit = handleSubmit(async (formValues) => {
               rows="4" class="w-full p-3 rounded-md text-gray-800 text-sm resize-none bg-gray-100"></textarea>
           </div>
 
-          <button type="submit"
-            class="w-full py-2 bg-black text-white rounded-md hover:bg-amber-400 transition duration-300 text-lg font-semibold">
-            {{ initialData && initialData._id ? 'Actualizar' : 'Reservar' }}
-          </button>
+          <div class="flex gap-4">
+            <button type="submit"
+              class="w-1/2 py-2 bg-black text-white rounded-md hover:bg-gray-700 transition duration-300 text-lg font-semibold">
+              {{ initialData && initialData._id ? 'Actualizar' : 'Guardar' }}
+            </button>
+
+            <button type="button" @click="emit('cancel')"
+              class="w-1/2 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400 transition duration-300 text-lg font-semibold">
+              Cancelar
+            </button>
+
+          </div>
         </form>
       </div>
     </div>

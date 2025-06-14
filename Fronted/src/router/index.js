@@ -13,10 +13,11 @@ import Users from '@/components/AdminComponets/user/Users.vue';
 import UserCreate from '@/components/AdminComponets/user/ModalCrearUsuario.vue';
 import CrudSpecialities from "@/components/AdminComponets/Specialties/CrudSpecialities.vue";
 import CrudReservations from "@/components/AdminComponets/Reservations/CrudReservations.vue";
-import CrudDishes  from "@/components/AdminComponets/Dishes/CrudDishes.vue";
+import CrudDishes from "@/components/AdminComponets/Dishes/CrudDishes.vue";
+import CrudGalleries from "@/components/AdminComponets/Galleries/CrudGalleries.vue";
+import CrudOrders from "@/components/AdminComponets/Order/CrudOrder.vue";
 import Profile from '@/components/Profile.vue';
-import ProfileEdit from '../view/ProfileEdit.vue';   
-
+import ProfileEdit from '../view/ProfileEdit.vue';
 
 
 const routes = [
@@ -27,15 +28,17 @@ const routes = [
   { path: '/register', component: Register, name: 'Register' },
   { path: '/login', component: Login, name: 'Login' },
   { path: '/cart', component: Cart, name: 'Cart' },
-  { path: '/profile', component: Profile, name: 'Profile', meta: { requiresAuth: true } },
-  { path: '/profile/edit', component: ProfileEdit, name: 'ProfileEdit', meta: { requiresAuth: true } },
   { path: '/user', component: Users, name: 'User', meta: { requiresAuth: true, role: 'admin' } },
   { path: '/user/create', component: UserCreate, name: 'UserCreate', meta: { requiresAuth: true, role: 'admin' } },
   { path: '/CrudSpecialities', component: CrudSpecialities, name: 'CrudSpecialities', meta: { requiresAuth: true, role: 'admin' } },
   { path: '/CrudReservations', component: CrudReservations, name: 'CrudReservations', meta: { requiresAuth: true, role: 'admin' } },
-  { path: '/CrudDishes', component: CrudDishes, name: 'CrudDishes' , meta: { requiresAuth: true, role: 'admin' } },
+  { path: '/CrudDishes', component: CrudDishes, name: 'CrudDishes', meta: { requiresAuth: true, role: 'admin' } },
+  { path: '/CrudGalleries', component: CrudGalleries, name: 'CrudGalleries' },
+  { path: '/CrudOrders', component: CrudOrders, name: 'CrudOrders' },
+  { path: '/profile', component: Profile, name: 'Profile', meta: { requiresAuth: true } },
+  { path: '/profile/edit', component: ProfileEdit, name: 'ProfileEdit', meta: { requiresAuth: true } }
+];
 
-]
 
 const router = createRouter({
   history: createWebHistory(),

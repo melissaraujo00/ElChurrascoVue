@@ -2,6 +2,9 @@
 import { useForm, useField } from 'vee-validate';
 import * as yup from 'yup';
 import { watch, ref } from 'vue';
+import { useToast } from 'vue-toastification';
+
+const toast = useToast();
 
 const API_URL = import.meta.env.VITE_API_URL;
 const emit = defineEmits(['saved', 'cancel']);
@@ -19,6 +22,7 @@ const props = defineProps({
 const validationSchema = yup.object({
     nombre: yup.string().required('El nombre es obligatorio'),
     descripcion: yup.string(),
+    imagen: yup.mixed().required('La imagen es obligatoria'),
     type: yup.string()
         .oneOf(['Entradas', 'Platos Fuertes', 'Bebidas', 'Menu Infantil'], 'Tipo inválido')
         .required('El tipo es obligatorio')
@@ -91,11 +95,11 @@ const onSubmit = handleSubmit(async (formValues) => {
             throw new Error(data.message || 'Error en la solicitud');
         }
 
-        alert(data.message || (isEdit ? 'Especialidad actualizada correctamente' : 'Especialidad creada correctamente'));
+        toast.success(isEdit ? 'Especialidad actualizada correctamente' : 'Especialidad creada correctamente');
         emit('saved');
     } catch (error) {
         console.error(error);
-        alert('Ocurrió un error al guardar la especialidad.');
+        toast.error(isEdit ? 'Error al actualizar' : 'Error al guardar');
     }
 });
 
@@ -105,7 +109,7 @@ const onSubmit = handleSubmit(async (formValues) => {
     <div class="relative w-full col-span-2 overflow-hidden h-[800px]">
         <div class="absolute inset-0 flex flex-col items-center justify-center m-3 px-4">
             <div class="p-8 bg-white rounded-xl w-full max-w-[690px] h-auto flex flex-col shadow-xl mx-4 sm:mx-5">
-                <h2 class="text-5xl text-black font-bold mb-8 mt-5 text-center">
+                <h2 class="text-3xl text-black font-bold mb-8 mt-5 text-center">
                     {{ initialData && initialData._id ? 'Editar Especialidad' : 'Agregar Especialidad' }}
                 </h2>
                 <form @submit.prevent="onSubmit" class="w-full flex flex-col gap-6">
@@ -140,10 +144,18 @@ const onSubmit = handleSubmit(async (formValues) => {
                         <span class="text-sm text-red-500">{{ errors.type }}</span>
                     </div>
 
-                    <button type="submit"
-                        class="w-full py-2 bg-black text-white rounded-md hover:bg-amber-400 transition duration-300 text-lg font-semibold">
-                        {{ initialData && initialData._id ? 'Actualizar' : 'Guardar' }}
-                    </button>
+                    <div class="flex gap-4">
+                        <button type="submit"
+                            class="w-1/2 py-2 bg-black text-white rounded-md hover:bg-gray-700 transition duration-300 text-lg font-semibold">
+                            {{ initialData && initialData._id ? 'Actualizar' : 'Guardar' }}
+                        </button>
+
+                        <button type="button" @click="emit('cancel')"
+                            class="w-1/2 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400 transition duration-300 text-lg font-semibold">
+                            Cancelar
+                        </button>
+
+                    </div>
                 </form>
             </div>
         </div>

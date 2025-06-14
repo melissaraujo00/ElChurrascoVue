@@ -52,16 +52,16 @@ function onSaved() {
     :editItem="editReservation"
     :searchKeys="['nombre', 'contactos', 'datosAdicionales']"
     :showDelete="false"
+    :showEdit="true" 
     @open-modal="openModal"
   />
 
   <div v-if="showModal" class="fixed inset-0 flex justify-center items-center z-50">
     <button @click="closeModal" class="absolute top-3 right-3 text-gray-600 hover:text-gray-900 font-bold text-xl">
-      &times;
     </button>
     <ReservationForm
       :initialData="selected"
-      @close="closeModal"
+      @cancel="closeModal"
       @saved="onSaved"  
     />
   </div>

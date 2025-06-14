@@ -3,6 +3,7 @@ import Specialty from '../models/specialtyModel.js';
 import dishValidation from '../validations/dishValidation.js';
 import specialtyValidation from '../validations/specialtyValidation.js';
 import authMiddleware from '../middleware/authMiddleware.js';
+import fs from 'fs';
 
 export const createDish = [ 
     dishValidation, 

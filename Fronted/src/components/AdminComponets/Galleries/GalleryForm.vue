@@ -84,7 +84,7 @@ const onSubmit = handleSubmit(async (formValues) => {
     const data = await res.json();
 
     if (!res.ok) throw new Error(data.message || 'Error en la solicitud');
-    toast.error(isEdit ? 'Evento actualizado correctamente' : 'Evento creado correctamente');
+    toast.success(isEdit ? 'Evento actualizado correctamente' : 'Evento creado correctamente');
     emit('saved');
   } catch (error) {
     console.error(error);

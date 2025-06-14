@@ -9,7 +9,7 @@ import 'vue-toastification/dist/index.css';
 
 const app = createApp(App)
 
-app.use(Toast); // ⬅️ Registro del plugin
+app.use(Toast); 
 app.use(createPinia())
 app.use(router)
 app.mount('#app')

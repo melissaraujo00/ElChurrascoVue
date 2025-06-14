@@ -52,6 +52,7 @@ function onSaved() {
     :editItem="editReservation"
     :searchKeys="['nombre', 'contactos', 'datosAdicionales']"
     :showDelete="false"
+    :showEdit="true" 
     @open-modal="openModal"
   />
 

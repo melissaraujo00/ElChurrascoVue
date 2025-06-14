@@ -93,6 +93,7 @@ function onSaved() {
     :searchKeys="['title', 'description']"
     :renderImage="renderImage"
     :showDelete="true"
+    :showEdit="true" 
     @open-modal="openModal"
   />
 

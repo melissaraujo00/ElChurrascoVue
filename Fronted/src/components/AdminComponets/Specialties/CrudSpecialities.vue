@@ -73,7 +73,7 @@ function onSaved() {
     { label: 'Imagen', key: 'imagen' },
     { label: 'Tipo', key: 'type' }
   ]" :fetchData="fetchSpecialties" :editItem="editSpecialty" :deleteItem="deleteSpecialty"
-    :searchKeys="['nombre', 'descripcion', 'type']" :renderImage="renderImage" :showDelete="true"
+    :searchKeys="['nombre', 'descripcion', 'type']" :renderImage="renderImage" :showDelete="true" :showEdit="true" 
     @open-modal="openModal" />
 
   <div v-if="showModal" class="fixed inset-0 flex justify-center items-center z-50">

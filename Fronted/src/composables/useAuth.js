@@ -74,11 +74,32 @@ export function useAuth() {
     }
   }
 
+async function updateProfile(data) {
+  const response = await fetch(`${API_URL}/login/actualizarUsuarioLogeado`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    credentials: 'include',
+    body: JSON.stringify(data)
+  })
+
+  if (!response.ok) throw new Error('Error al actualizar el perfil')
+
+  // Refrescar datos del usuario y actualizar el store
+  const updated = await checkAuthStatus()
+  return updated
+}
+
+
+
+
   return {
     isAuthenticated: computed(() => authStore.isAuthenticated),
     user: computed(() => authStore.user),
     userRole: computed(() => authStore.userRole),
     checkAuthStatus,
+    updateProfile,
     logout,
     login
   }

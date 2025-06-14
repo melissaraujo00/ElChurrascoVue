@@ -2,39 +2,43 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuth } from '@/composables/useAuth' // <-- importante
 
 // Importa tus componentes
-import Home from '../components/Home.vue'
-import Menu from '../components/Menu.vue'
-import Reserve from '../components/Reserve.vue'
-import Events from '../components/Events.vue'
-import Register from '../components/Register.vue'
-import Login from '../components/Login.vue'
-import Cart from '../components/Cart.vue'
-import Users from '@/components/AdminComponets/user/Users.vue'
-import UserCreate from '@/components/AdminComponets/user/ModalCrearUsuario.vue'
-import CrudSpecialities from "@/components/AdminComponets/Specialties/CrudSpecialities.vue"
-import CrudReservations from "@/components/AdminComponets/Reservations/CrudReservations.vue"
-import CrudDishes  from "@/components/AdminComponets/Dishes/CrudDishes.vue";
-import CrudGalleries  from "@/components/AdminComponets/Galleries/CrudGalleries.vue";
-import CrudOrders  from "@/components/AdminComponets/Order/CrudOrder.vue";
+import Home from '../components/Home.vue';
+import Menu from '../components/Menu.vue';
+import Reserve from '../components/Reserve.vue';
+import Events from '../components/Events.vue';
+import Register from '../components/Register.vue';
+import Login from '../components/Login.vue';
+import Cart from '../components/Cart.vue';
+import Users from '@/components/AdminComponets/user/Users.vue';
+import UserCreate from '@/components/AdminComponets/user/ModalCrearUsuario.vue';
+import CrudSpecialities from "@/components/AdminComponets/Specialties/CrudSpecialities.vue";
+import CrudReservations from "@/components/AdminComponets/Reservations/CrudReservations.vue";
+import CrudDishes from "@/components/AdminComponets/Dishes/CrudDishes.vue";
+import CrudGalleries from "@/components/AdminComponets/Galleries/CrudGalleries.vue";
+import CrudOrders from "@/components/AdminComponets/Order/CrudOrder.vue";
+import Profile from '@/components/Profile.vue';
+import ProfileEdit from '../view/ProfileEdit.vue';
 
 
 const routes = [
-    { path: '/', component: Home, name: 'Home'}, 
-    { path: '/menu', component: Menu, name: 'Menu'},
-    { path: '/reserve', component: Reserve,name: 'Reserve' },
-    { path: '/events', component: Events, name: 'Events' },
-    { path: '/register', component: Register, name: 'Register' },
-    { path: '/login', component: Login, name: 'Login' },
-    { path: '/cart', component: Cart ,name: 'Cart'},
-    { path: '/user', component: Users, name: 'User'},
-    { path: '/cart', name: 'Cart'},
-    { path: '/cart', component:Cart ,name: 'Cart'},
-    { path: '/CrudSpecialities', component: CrudSpecialities, name: 'CrudSpecialities'},
-    { path: '/CrudReservations', component: CrudReservations, name: 'CrudReservations'},
-    { path: '/CrudDishes', component: CrudDishes, name: 'CrudDishes'},
-    { path: '/CrudGalleries', component: CrudGalleries, name: 'CrudGalleries'},
-    { path: '/CrudOrders', component: CrudOrders, name: 'CrudOrders'}
-]
+  { path: '/', component: Home, name: 'Home' },
+  { path: '/menu', component: Menu, name: 'Menu' },
+  { path: '/reserve', component: Reserve, name: 'Reserve' },
+  { path: '/events', component: Events, name: 'Events' },
+  { path: '/register', component: Register, name: 'Register' },
+  { path: '/login', component: Login, name: 'Login' },
+  { path: '/cart', component: Cart, name: 'Cart' },
+  { path: '/user', component: Users, name: 'User', meta: { requiresAuth: true, role: 'admin' } },
+  { path: '/user/create', component: UserCreate, name: 'UserCreate', meta: { requiresAuth: true, role: 'admin' } },
+  { path: '/CrudSpecialities', component: CrudSpecialities, name: 'CrudSpecialities', meta: { requiresAuth: true, role: 'admin' } },
+  { path: '/CrudReservations', component: CrudReservations, name: 'CrudReservations', meta: { requiresAuth: true, role: 'admin' } },
+  { path: '/CrudDishes', component: CrudDishes, name: 'CrudDishes', meta: { requiresAuth: true, role: 'admin' } },
+  { path: '/CrudGalleries', component: CrudGalleries, name: 'CrudGalleries' },
+  { path: '/CrudOrders', component: CrudOrders, name: 'CrudOrders' },
+  { path: '/profile', component: Profile, name: 'Profile', meta: { requiresAuth: true } },
+  { path: '/profile/edit', component: ProfileEdit, name: 'ProfileEdit', meta: { requiresAuth: true } }
+];
+
 
 const router = createRouter({
   history: createWebHistory(),

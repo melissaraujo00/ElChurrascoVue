@@ -223,7 +223,7 @@ const closeImageModal = () => {
                   <img 
                     :src="`${API_URL}${dish.imagen}`"
                     :alt="dish.nombre"
-                    class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    class="w-full h-full object-cover hover:scale-105 transition-transform duration-300 "
                     @error="$event.target.src = '/img/default-dish.jpg'"
                   />
                   <!-- Badge de oferta -->

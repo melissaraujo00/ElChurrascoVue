@@ -85,6 +85,7 @@ async function deleteDish(dish) {
     try {
         const res = await fetch(`${API_URL}/dishes/${dish._id}`, {
             method: 'DELETE',
+            credentials: 'include'
         });     
 
         if (!res.ok) {

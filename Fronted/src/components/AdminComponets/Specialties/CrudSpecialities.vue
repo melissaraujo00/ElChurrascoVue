@@ -3,7 +3,9 @@
 import CrudTable from '@/components/AdminComponets/CrudTable.vue';
 import SpecialtyForm from './SpecialtyForm.vue';
 import { ref } from 'vue';
+import { useToast } from 'vue-toastification';
 
+const toast = useToast();
 const API_URL = import.meta.env.VITE_API_URL;
 const crudTableRef = ref(null);
 const showModal = ref(false);
@@ -47,8 +49,10 @@ async function deleteSpecialty(specialty) {
     if (!res.ok) throw new Error('Error al eliminar');
 
     crudTableRef.value?.loadData();
+
+    toast.success('Especialidad eliminada correctamente');
   } catch (error) {
-    console.error('Error al obtener especialidades:', error);
+    toast.error('Error al eliminar la especialidad');
     return [];
   }
 }

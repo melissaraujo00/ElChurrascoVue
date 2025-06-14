@@ -2,6 +2,8 @@
 import { useForm, useField } from 'vee-validate';
 import * as yup from 'yup';
 import { ref, watch } from 'vue';
+import { useToast } from 'vue-toastification';
+const toast = useToast();
 
 const API_URL = import.meta.env.VITE_API_URL;
 const emit = defineEmits(['saved', 'close']);
@@ -68,7 +70,6 @@ const onSubmit = handleSubmit(async (formValues) => {
       }
     }
 
-    // Solo agrega la imagen si se seleccionó un archivo nuevo
     if (imagenFile.value) {
       formData.append('imagen', imagenFile.value);
     }
@@ -83,12 +84,11 @@ const onSubmit = handleSubmit(async (formValues) => {
     const data = await res.json();
 
     if (!res.ok) throw new Error(data.message || 'Error en la solicitud');
-
-    alert(data.message || (isEdit ? 'Galería actualizada correctamente' : 'Galería creada correctamente'));
+    toast.error(isEdit ? 'Evento actualizado correctamente' : 'Evento creado correctamente');
     emit('saved');
   } catch (error) {
     console.error(error);
-    alert('Ocurrió un error al guardar la galería.');
+    toast.error(isEdit ? 'Error al actualizar el evento' : 'Error al crear el evento');
   }
 });
 </script>

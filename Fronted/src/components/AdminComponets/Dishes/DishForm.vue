@@ -2,7 +2,9 @@
 import { useForm, useField } from 'vee-validate';
 import * as yup from 'yup';
 import { watch, ref, onMounted } from 'vue';
+import { useToast } from 'vue-toastification';
 
+const toast = useToast();
 const API_URL = import.meta.env.VITE_API_URL;
 const emit = defineEmits(['saved', 'cancel']);
 const imagenFile = ref(null);
@@ -114,12 +116,10 @@ const onSubmit = handleSubmit(async (formValues) => {
     if (!res.ok) {
       throw new Error(data.message || 'Error en la solicitud');
     }
-
-    alert(data.message || (isEdit ? 'Plato actualizado correctamente' : 'Plato creado correctamente'));
+    toast.success(isEdit ? 'Plato actualizado correctamente' : 'Plato creado correctamente');
     emit('saved');
   } catch (error) {
-    console.error(error);
-    alert('Ocurrió un error al guardar el plato.');
+    toast.error(isEdit ? 'Plato actualizado correctamente' : 'Plato creado correctamente');
   }
 });
 </script>

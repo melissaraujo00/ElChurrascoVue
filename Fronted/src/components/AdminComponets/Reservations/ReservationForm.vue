@@ -3,6 +3,9 @@ import { useForm, useField } from 'vee-validate';
 import * as yup from 'yup';
 import { watch } from 'vue';
 import axios from 'axios';
+import { useToast } from 'vue-toastification';
+
+const toast = useToast();
 
 const props = defineProps({
   initialData: {
@@ -84,7 +87,7 @@ const onSubmit = handleSubmit(async (formValues) => {
         contactos: formValues.contactEmail,
         datosAdicionales: formValues.additionalInfo
       });
-      alert(response.data.message || 'Reservación actualizada correctamente');
+      toast.success('Reservacion actualizada correctamente');
     } else {
       const response = await axios.post(`${API_URL}/reservations`, {
         nombre: formValues.name,
@@ -94,7 +97,7 @@ const onSubmit = handleSubmit(async (formValues) => {
         contactos: formValues.contactEmail,
         datosAdicionales: formValues.additionalInfo
       });
-      alert(response.data.message || 'Reservación creada correctamente');
+      toast.success('Reservacion guardada correctamente');
     }
 
     emit('saved');

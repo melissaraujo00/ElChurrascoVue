@@ -2,6 +2,9 @@
 import CrudTable from '@/components/AdminComponets/CrudTable.vue';
 import GalleryForm from './GalleryForm.vue'; // Cambia al nuevo formulario
 import { ref } from 'vue';
+import { useToast } from 'vue-toastification';
+
+const toast = useToast();
 
 const API_URL = import.meta.env.VITE_API_URL;
 const crudTableRef = ref(null);
@@ -57,11 +60,11 @@ async function deleteGallery(gallery) {
       const errorData = await res.json().catch(() => ({}));
       throw new Error(errorData.message || `Error al eliminar. Código: ${res.status}`);
     }
-
     crudTableRef.value?.loadData();
+    toast.success('Evento eliminado correctamente');
+
   } catch (error) {
-    console.error('Error al eliminar galería:', error);
-    alert(error.message || 'Ocurrió un error al eliminar la galería.');
+    toast.error('Error al eliminar un evento');
   }
 }
 

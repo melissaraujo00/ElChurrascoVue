@@ -3,6 +3,8 @@
 import CrudTable from '@/components/AdminComponets/CrudTable.vue';
 import DishForm from './DishForm.vue';
 import { ref } from 'vue';
+import { useToast } from 'vue-toastification';
+const toast = useToast();
 
 const API_URL = import.meta.env.VITE_API_URL;
 const crudTableRef = ref(null);
@@ -64,9 +66,10 @@ async function deleteDish(dish) {
         }
 
         crudTableRef.value?.loadData();
+        toast.success('Plato eliminado correctamente');
     } catch (error) {
-        console.error('Error al eliminar plato:', error);
-        alert(error.message || 'Ocurrió un error al eliminar el plato.');
+      
+       toast.error('Ocurrió un error');
     }
 }
 

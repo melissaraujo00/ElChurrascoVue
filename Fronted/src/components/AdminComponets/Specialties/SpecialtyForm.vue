@@ -2,6 +2,9 @@
 import { useForm, useField } from 'vee-validate';
 import * as yup from 'yup';
 import { watch, ref } from 'vue';
+import { useToast } from 'vue-toastification';
+
+const toast = useToast();
 
 const API_URL = import.meta.env.VITE_API_URL;
 const emit = defineEmits(['saved', 'cancel']);
@@ -92,11 +95,11 @@ const onSubmit = handleSubmit(async (formValues) => {
             throw new Error(data.message || 'Error en la solicitud');
         }
 
-        alert(data.message || (isEdit ? 'Especialidad actualizada correctamente' : 'Especialidad creada correctamente'));
+        toast.success(isEdit ? 'Especialidad actualizada correctamente' : 'Especialidad creada correctamente');
         emit('saved');
     } catch (error) {
         console.error(error);
-        alert('Ocurrió un error al guardar la especialidad.');
+        toast.error(isEdit ? 'Error al actualizar' : 'Error al guardar');
     }
 });
 

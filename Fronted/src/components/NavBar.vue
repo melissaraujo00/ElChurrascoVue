@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useAuth } from '@/composables/useAuth.js' // Importar el composable
+import { useAuth } from '@/composables/useAuth.js'
+import { useRoute } from 'vue-router' // NUEVO: para detectar la ruta actual
 
 // Usar el composable de autenticación
 const { isAuthenticated, user, userRole, checkAuthStatus, logout } = useAuth()
@@ -21,8 +22,8 @@ const menus = {
     { label: 'Eventos', path: 'Events' },
     { label: 'Usuarios', path: 'User' },
     { label: 'Especialidades', path: 'CrudSpecialities' },
-    { label: 'Reservaciones', path: 'CrudReservations'},
-    { label: 'Platillos', path: 'CrudDishes'}
+    { label: 'Reservaciones', path: 'CrudReservations' },
+    { label: 'Platillos', path: 'CrudDishes' }
   ],
   user: [
     { label: 'Inicio', path: 'Home' },
@@ -31,7 +32,9 @@ const menus = {
     { label: 'Eventos', path: 'Events' }
   ]
 }
+
 const menuItems = computed(() => menus[userRole.value] || menus.user)
+const route = useRoute() // NUEVO: detectar ruta actual
 
 // Función logout mejorada
 const handleLogout = async () => {
@@ -75,7 +78,17 @@ onMounted(async () => {
       ]"
     >
       <li v-for="(item, index) in menuItems" :key="index" class="px-4 py-2 md:py-0">
-        <router-link :to="{ name: item.path }" class="text-white hover:text-red-950 font-medium" @click="menuOpen = false">
+        <router-link
+          :to="{ name: item.path }"
+          @click="menuOpen = false"
+          :class="[
+            'relative text-white font-medium transition-transform duration-200',
+            route.name === item.path
+              ? 'after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-[2px] after:bg-white'
+              : '',
+           
+          ]"
+        >
           {{ item.label }}
         </router-link>
       </li>

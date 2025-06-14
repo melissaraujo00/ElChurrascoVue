@@ -7,6 +7,8 @@ const productos = ref([]);
 const scrollContainer = ref(null);
 const cardWidth = ref(0);
 const currentIndex = ref(0);
+const autoScrollInterval = ref(null);
+const isUserInteracting = ref(false);
 
 const updateCardWidth = () => {
   if (scrollContainer.value) {
@@ -27,13 +29,63 @@ const fetchProductos = async () => {
   }
 };
 
+
+const startAutoScroll = () => {
+  if (autoScrollInterval.value) {
+    clearInterval(autoScrollInterval.value);
+  }
+  
+  autoScrollInterval.value = setInterval(() => {
+    if (!isUserInteracting.value && productos.value.length > 0) {
+      autoScrollNext();
+    }
+  }, 5000); // 5 segundos
+};
+
+const stopAutoScroll = () => {
+  if (autoScrollInterval.value) {
+    clearInterval(autoScrollInterval.value);
+    autoScrollInterval.value = null;
+  }
+};
+
+const autoScrollNext = () => {
+  if (currentIndex.value < maxIndex.value) {
+    currentIndex.value++;
+  } else {
+    // Volver al inicio cuando llegue al final
+    currentIndex.value = 0;
+  }
+  scrollToIndex();
+};
+
+// Pausar auto-scroll cuando el usuario interactúa
+const handleUserInteraction = () => {
+  isUserInteracting.value = true;
+  stopAutoScroll();
+  
+  // Reanudar auto-scroll después de 3 segundos de inactividad
+  setTimeout(() => {
+    isUserInteracting.value = false;
+    startAutoScroll();
+  }, 3000);
+};
+
 onMounted(() => {
   fetchProductos();
   window.addEventListener('resize', updateCardWidth);
+  
+  // Iniciar auto-scroll después de cargar los productos
+  setTimeout(() => {
+    if (productos.value.length > 0) {
+      startAutoScroll();
+    }
+  }, 1000);
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', updateCardWidth);
+  stopAutoScroll();
 });
 
 const maxIndex = computed(() => {
@@ -43,6 +95,7 @@ const maxIndex = computed(() => {
 });
 
 const scrollLeft = () => {
+  handleUserInteraction();
   if (currentIndex.value > 0) {
     currentIndex.value--;
     scrollToIndex();
@@ -50,6 +103,7 @@ const scrollLeft = () => {
 };
 
 const scrollRight = () => {
+  handleUserInteraction();
   if (currentIndex.value < maxIndex.value) {
     currentIndex.value++;
     scrollToIndex();
@@ -61,6 +115,15 @@ const scrollToIndex = () => {
     const scrollAmount = currentIndex.value * (cardWidth.value + 16); // 16px = space-x-4
     scrollContainer.value.scrollTo({ left: scrollAmount, behavior: 'smooth' });
   }
+};
+
+// Pausar auto-scroll cuando el mouse está sobre el carrusel
+const handleMouseEnter = () => {
+  isUserInteracting.value = true;
+};
+
+const handleMouseLeave = () => {
+  isUserInteracting.value = false;
 };
 </script>
 
@@ -84,7 +147,12 @@ const scrollToIndex = () => {
       </button>
 
       <!-- Contenedor con scroll -->
-      <div ref="scrollContainer" class="overflow-x-auto pb-4 scrollbar-hide p-2">
+      <div 
+        ref="scrollContainer" 
+        class="overflow-x-auto pb-4 scrollbar-hide p-2"
+        @mouseenter="handleMouseEnter"
+        @mouseleave="handleMouseLeave"
+      >
         <div class="flex space-x-4 px-2">
           <div
             v-for="(item, index) in productos"
@@ -117,6 +185,20 @@ const scrollToIndex = () => {
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
         </svg>
       </button>
+
+      <!-- Indicadores de posición (opcional) -->
+      <div class="flex justify-center mt-4 space-x-2">
+        <button
+          v-for="(_, index) in Array(maxIndex + 1)"
+          :key="index"
+          @click="() => { currentIndex = index; scrollToIndex(); handleUserInteraction(); }"
+          :class="[
+            'w-2 h-2 rounded-full transition-all duration-300',
+            currentIndex === index ? 'bg-white' : 'bg-white/50 hover:bg-white/75'
+          ]"
+          :aria-label="`Ir a la página ${index + 1}`"
+        ></button>
+      </div>
     </template>
 
     <!-- Mensaje si no hay productos -->

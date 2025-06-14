@@ -85,40 +85,40 @@ const updateQuantity = (newQuantity) => {
 }
 
 const addToCart = () => {
-  // Si no está autenticado, mostrar notificación
-  if (!isAuthenticated.value) {
-    showNotification.value = true
-    notificationMessage.value = 'Debes iniciar sesión para agregar productos al carrito'
-    notificationType.value = 'error'
-    setTimeout(() => {
-      showNotification.value = false
-    }, 4000)
-    return
-  }
+    // Si no está autenticado, mostrar notificación
+    if (!isAuthenticated.value) {
+        showNotification.value = true
+        notificationMessage.value = 'Debes iniciar sesión para agregar productos al carrito'
+        notificationType.value = 'error'
+        setTimeout(() => {
+            showNotification.value = false
+        }, 1000)
+        return
+    }
 
-  if (selectedDish.value) {
-    const cartItem = {
-      id: selectedDish.value._id,
-      nombre: selectedDish.value.nombre,
-      precio: selectedDish.value.precio,
-      imagen: selectedDish.value.imagen,
-      cantidad: quantity.value
+    if (selectedDish.value) {
+        const cartItem = {
+            id: selectedDish.value._id,
+            nombre: selectedDish.value.nombre,
+            precio: selectedDish.value.precio,
+            imagen: selectedDish.value.imagen,
+            cantidad: quantity.value
+        }
+
+        try {
+            // Usar el composable en lugar de manejar localStorage directamente
+            addToCartComposable(cartItem)
+
+            // Mostrar notificación de éxito
+            showSuccessNotification(`${cartItem.nombre} agregado al carrito!`, 'success')
+
+            // Cerrar modal
+            closeModal()
+        } catch (error) {
+            console.error('Error al agregar al carrito:', error)
+            showSuccessNotification(error.message || 'Error al agregar al carrito', 'error')
+        }
     }
-    
-    try {
-      // Usar el composable en lugar de manejar localStorage directamente
-      addToCartComposable(cartItem)
-      
-      // Mostrar notificación de éxito
-      showSuccessNotification(`${cartItem.nombre} agregado al carrito!`, 'success')
-      
-      // Cerrar modal
-      closeModal()
-    } catch (error) {
-      console.error('Error al agregar al carrito:', error)
-      showSuccessNotification(error.message || 'Error al agregar al carrito', 'error')
-    }
-  }
 }
 
 const showSuccessNotification = (message, type = 'success') => {
@@ -127,7 +127,7 @@ const showSuccessNotification = (message, type = 'success') => {
     showNotification.value = true
     setTimeout(() => {
         showNotification.value = false
-    }, 3000)
+    }, 1000)
 }
 
 // Función corregida para redireccionar
@@ -161,6 +161,7 @@ onMounted(async () => {
         <div class="w-[90%] h-px bg-white my-6 mx-auto"></div>
 
         <!-- Filtros -->
+        <!-- Filtros -->
         <section>
             <h1 class="text-center text-4xl font-bold">¡Nuestros platillos imperdibles!</h1>
 
@@ -168,39 +169,46 @@ onMounted(async () => {
                 <button
                     class="flex flex-col items-center space-y-1 transform transition duration-300 ease-in-out hover:scale-[1.15]"
                     @click="() => { activeFilter = 'todos'; currentPage = 1 }">
-                    <img src="../../public/img/campanita.png" alt="Todos" class="w-10 h-10 ">
-                    <span class="text-sm font-medium">Todos</span>
+                    <img src="../../public/img/campanita.png" alt="Todos" class="w-10 h-10">
+                    <span :class="['text-sm font-medium', activeFilter === 'todos' ? 'text-red-500' : '']">Todos</span>
                 </button>
 
                 <button
                     class="flex flex-col items-center space-y-1 transform transition duration-300 ease-in-out hover:scale-[1.15]"
                     @click="() => { activeFilter = 'entradas'; currentPage = 1 }">
                     <img src="../../public/img/tenedor.png" alt="Entradas" class="w-10 h-10">
-                    <span class="text-sm font-medium">Entradas</span>
+                    <span
+                        :class="['text-sm font-medium', activeFilter === 'entradas' ? 'text-red-500' : '']">Entradas</span>
                 </button>
 
                 <button
                     class="flex flex-col items-center space-y-1 transform transition duration-300 ease-in-out hover:scale-[1.15]"
                     @click="() => { activeFilter = 'plato fuerte'; currentPage = 1 }">
                     <img src="../../public/img/dosTenedores.png" alt="Platos Fuertes" class="w-10 h-10">
-                    <span class="text-sm font-medium text-center">Platos Fuertes</span>
+                    <span
+                        :class="['text-sm font-medium text-center', activeFilter === 'plato fuerte' ? 'text-red-500' : '']">Platos
+                        Fuertes</span>
                 </button>
 
                 <button
                     class="flex flex-col items-center space-y-1 transform transition duration-300 ease-in-out hover:scale-[1.15]"
                     @click="() => { activeFilter = 'bebida'; currentPage = 1 }">
                     <img src="../../public/img/botellita.png" alt="Bebidas" class="w-10 h-10">
-                    <span class="text-sm font-medium">Bebidas</span>
+                    <span
+                        :class="['text-sm font-medium', activeFilter === 'bebida' ? 'text-red-500' : '']">Bebidas</span>
                 </button>
 
                 <button
                     class="flex flex-col items-center space-y-1 transform transition duration-300 ease-in-out hover:scale-[1.15]"
                     @click="() => { activeFilter = 'menu infantil'; currentPage = 1 }">
                     <img src="../../public/img/hamburguesita.png" alt="Menú infantil" class="w-10 h-10">
-                    <span class="text-sm font-medium text-center">Menú infantil</span>
+                    <span
+                        :class="['text-sm font-medium text-center', activeFilter === 'menu infantil' ? 'text-red-500' : '']">Menú
+                        infantil</span>
                 </button>
             </div>
         </section>
+
 
         <!-- Listado de platillos -->
         <section class="mt-12 px-4">
@@ -227,12 +235,15 @@ onMounted(async () => {
                 <div v-for="dish in paginatedDishes" :key="dish._id"
                     class="flex flex-col bg-gray-900 text-white rounded-2xl shadow-[0_4px_10px_rgba(107,114,128,0.5)] overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer relative"
                     @click="openModal(dish)">
-                    
+
                     <!-- Badge de "Inicia sesión" si no está autenticado -->
                     <div v-if="!isAuthenticated" class="absolute top-3 right-3 z-10">
-                        <div class="bg-blue-600/90 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-medium flex items-center">
+                        <div
+                            class="bg-blue-600/90 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-medium flex items-center">
                             <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                <path fill-rule="evenodd"
+                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                    clip-rule="evenodd" />
                             </svg>
                             Inicia sesión
                         </div>
@@ -274,22 +285,14 @@ onMounted(async () => {
         </section>
 
         <!-- Modal -->
-        <AddToCartModal 
-            :show="showModal" 
-            :dish="selectedDish" 
-            :quantity="quantity" 
-            :isAuthenticated="isAuthenticated"
-            @close="closeModal"
-            @update:quantity="updateQuantity" 
-            @add="addToCart" 
-            @login="redirectToLogin" />
+        <AddToCartModal :show="showModal" :dish="selectedDish" :quantity="quantity" :isAuthenticated="isAuthenticated"
+            @close="closeModal" @update:quantity="updateQuantity" @add="addToCart" @login="redirectToLogin" />
 
         <!-- Notificaciones -->
-        <div v-if="showNotification"
-            :class="[
-                'fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300 text-white',
-                notificationType === 'success' ? 'bg-green-600' : 'bg-red-600'
-            ]">
+        <div v-if="showNotification" :class="[
+            'fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300 text-white',
+            notificationType === 'success' ? 'bg-green-600' : 'bg-red-600'
+        ]">
             <div class="flex items-center">
                 <svg v-if="notificationType === 'success'" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd"
@@ -297,11 +300,13 @@ onMounted(async () => {
                         clip-rule="evenodd" />
                 </svg>
                 <svg v-else class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                        clip-rule="evenodd" />
                 </svg>
                 {{ notificationMessage }}
             </div>
-            <button v-if="notificationType === 'error'" @click="redirectToLogin" 
+            <button v-if="notificationType === 'error'" @click="redirectToLogin"
                 class="mt-2 w-full bg-white/20 hover:bg-white/30 px-3 py-1 rounded text-sm font-medium transition-colors">
                 Ir a Iniciar Sesión
             </button>

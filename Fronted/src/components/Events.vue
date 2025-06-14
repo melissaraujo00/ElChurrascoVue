@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from "vue"
+import { ref, onMounted, computed, onUnmounted } from "vue"
 import { useRouter } from "vue-router"
 import AddToCartModal from '@/components/AddToCartModal.vue'
 import axios from 'axios'
@@ -11,6 +11,11 @@ const gallery = ref([])
 const error = ref(null)
 const currentIndex = ref(0)
 const carouselContainer = ref(null)
+
+// Variables para auto-play del carrusel
+const autoPlayInterval = ref(null)
+const isHovered = ref(false)
+const autoPlayDelay = 4000 // 4 segundos
 
 // Variables para la paginación de la galería (3 columnas x 2 filas = 6 imágenes por página)
 const currentPage = ref(1)
@@ -45,6 +50,16 @@ const getGallery = async () => {
 onMounted(() => {
     getDishes()
     getGallery()
+    // Iniciar auto-play después de cargar los datos
+    setTimeout(() => {
+        if (offerDishes.value.length > 1) {
+            startAutoPlay()
+        }
+    }, 1000)
+})
+
+onUnmounted(() => {
+    stopAutoPlay()
 })
 
 const offerDishes = computed(() => {
@@ -71,12 +86,34 @@ const prevPage = () => {
     if (currentPage.value > 1) currentPage.value--
 }
 
-// Funciones del carrusel (mantienen la funcionalidad original)
+// Funciones del carrusel mejoradas con auto-play
 const nextSlide = () => {
+    if (offerDishes.value.length === 0) return
+    
     if (currentIndex.value < offerDishes.value.length - 1) {
         currentIndex.value++
-        scrollToCard()
+    } else {
+        // Volver al inicio cuando llegue al final
+        currentIndex.value = 0
     }
+    scrollToCard()
+}
+
+const prevSlide = () => {
+    if (offerDishes.value.length === 0) return
+    
+    if (currentIndex.value > 0) {
+        currentIndex.value--
+    } else {
+       
+        currentIndex.value = offerDishes.value.length - 1
+    }
+    scrollToCard()
+}
+
+const goToSlide = (index) => {
+    currentIndex.value = index
+    scrollToCard()
 }
 
 const scrollToCard = () => {
@@ -91,6 +128,42 @@ const scrollToCard = () => {
     }
 }
 
+
+const startAutoPlay = () => {
+    if (offerDishes.value.length <= 1) return
+    
+    autoPlayInterval.value = setInterval(() => {
+        if (!isHovered.value) {
+            nextSlide()
+        }
+    }, autoPlayDelay)
+}
+
+const stopAutoPlay = () => {
+    if (autoPlayInterval.value) {
+        clearInterval(autoPlayInterval.value)
+        autoPlayInterval.value = null
+    }
+}
+
+const handleMouseEnter = () => {
+    isHovered.value = true
+}
+
+const handleMouseLeave = () => {
+    isHovered.value = false
+}
+
+
+const openImageModal = (image) => {
+    selectedImage.value = image
+    showModal.value = true
+}
+
+const closeImageModal = () => {
+    showModal.value = false
+    selectedImage.value = null
+}
 </script>
 
 <template>
@@ -115,11 +188,27 @@ const scrollToCard = () => {
         <!-- Sección del carrusel -->
         <section class="p-4 flex flex-col items-center">
           <div class="flex items-center justify-between mb-6 w-full max-w-5xl mx-auto">
-            <h3 class="text-2xl font-bold text-center w-full">Platos en oferta</h3>
-          </div>
+          <h3 class="text-2xl font-bold text-center w-full animate-scale-bounce">Platos en oferta</h3>
+        </div>
 
-          <!-- Contenedor del carrusel -->
-          <div class="relative overflow-hidden w-full max-w-5xl mx-auto">
+          <!-- Contenedor del carrusel con controles -->
+          <div 
+            class="relative overflow-hidden w-full max-w-5xl mx-auto"
+            @mouseenter="handleMouseEnter"
+            @mouseleave="handleMouseLeave"
+          >
+            <!-- Botón anterior -->
+            <button 
+              v-if="offerDishes.length > 1"
+              @click="prevSlide"
+              class="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-200 backdrop-blur-sm"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            <!-- Contenedor de tarjetas -->
             <div 
               ref="carouselContainer"
               class="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth"
@@ -128,9 +217,9 @@ const scrollToCard = () => {
               <div 
                 v-for="dish in offerDishes" 
                 :key="dish.id" 
-                class="flex-shrink-0 w-80 bg-white text-black rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
+                class="flex-shrink-0 w-80 bg-white text-black rounded-lg shadow-gray-500 shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
               >
-                <div class="relative h-48 overflow-hidden">
+                <div class="relative h-48 overflow-hidden ">
                   <img 
                     :src="`${API_URL}${dish.imagen}`"
                     :alt="dish.nombre"
@@ -138,7 +227,7 @@ const scrollToCard = () => {
                     @error="$event.target.src = '/img/default-dish.jpg'"
                   />
                   <!-- Badge de oferta -->
-                  <div class="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-sm font-bold">
+                  <div class="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-full text-sm font-bold animate-pulse">
                     {{ dish.offer }}
                   </div>
                 </div>
@@ -148,18 +237,31 @@ const scrollToCard = () => {
                 </div>
               </div>
             </div>
+
+            <!-- Botón siguiente -->
+            <button 
+              v-if="offerDishes.length > 1"
+              @click="nextSlide"
+              class="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-200 backdrop-blur-sm"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
           </div>
 
-          <!-- Indicadores de posición -->
-          <div class="flex justify-center mt-6 gap-2">
+          <!-- Indicadores de posición mejorados -->
+          <div v-if="offerDishes.length > 1" class="flex justify-center mt-6 gap-2">
             <div 
               v-for="(dish, index) in offerDishes" 
               :key="index"
-              @click="currentIndex = index; scrollToCard()"
-              class="w-2 h-2 rounded-full cursor-pointer transition-all duration-200"
-              :class="index === currentIndex ? 'bg-red-500' : 'bg-gray-400 hover:bg-gray-300'"
+              @click="goToSlide(index)"
+              class="w-3 h-3 rounded-full cursor-pointer transition-all duration-300 hover:scale-125"
+              :class="index === currentIndex ? 'bg-red-500 scale-110' : 'bg-gray-400 hover:bg-gray-300'"
             ></div>
           </div>
+
+          
 
           <!-- Mensaje si no hay ofertas -->
           <div v-if="offerDishes.length === 0" class="text-center py-8">
@@ -235,7 +337,21 @@ const scrollToCard = () => {
             </div>
         </section>
 
-        
+        <!-- Modal para imagen ampliada -->
+        <div v-if="showModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" @click="closeImageModal">
+            <div class="relative max-w-4xl max-h-[90vh] bg-white rounded-lg overflow-hidden" @click.stop>
+                <button @click="closeImageModal" class="absolute top-4 right-4 text-white bg-black/50 hover:bg-black/70 rounded-full p-2 z-10">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                <img :src="`${API_URL}${selectedImage.imagen}`" :alt="selectedImage.title" class="w-full h-auto max-h-[90vh] object-contain" />
+                <div class="p-4 bg-white">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">{{ selectedImage.title }}</h3>
+                    <p class="text-gray-600">{{ selectedImage.description }}</p>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -244,4 +360,32 @@ const scrollToCard = () => {
 .scrollbar-hide::-webkit-scrollbar {
     display: none;
 }
+
+/* Animación para el badge de oferta */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: .7;
+    }
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes scaleBounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+.animate-scale-bounce {
+  animation: scaleBounce 1.5s ease-in-out infinite;
+}
+
 </style>

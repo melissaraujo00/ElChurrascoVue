@@ -127,74 +127,87 @@ const onSubmit = handleSubmit(async (formValues) => {
 
 
 <template>
-  <div class="relative w-full col-span-2 overflow-hidden h-[800px]">
-    <div class="absolute inset-0 flex flex-col items-center justify-center m-3 px-4">
-      <div class="p-8 bg-white rounded-xl w-full max-w-[690px] h-auto flex flex-col shadow-xl mx-4 sm:mx-5 overflow-auto" style="scrollbar-width: none; -ms-overflow-style: none;">
-        <h2 class="text-3xl text-black font-bold mb-8 mt-5 text-center">
+  <div class="absolute inset-0 flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-white rounded-xl w-full max-w-2xl shadow-xl overflow-hidden">
+      <div class="p-4 sm:p-6 max-h-screen overflow-y-auto" style="scrollbar-width: none; -ms-overflow-style: none;">
+        <h2 class="text-lg sm:text-xl text-black font-bold mb-4 text-center">
           {{ initialData && initialData._id ? 'Editar Plato' : 'Agregar Plato' }}
         </h2>
-        <form @submit.prevent="onSubmit" class="w-full flex flex-col gap-6">
+        
+        <form @submit.prevent="onSubmit" class="w-full space-y-4">
+          <!-- Nombre -->
           <div>
-            <label for="nombre" class="block text-black mb-1 font-semibold">Nombre</label>
+            <label for="nombre" class="block text-black mb-1 font-semibold text-sm">Nombre</label>
             <input v-model="nombre" id="nombre" name="nombre" type="text" placeholder="Ingrese el nombre"
-              class="w-full p-3 rounded-md text-gray-800 text-sm bg-gray-100" />
-            <span class="text-sm text-red-500">{{ errors.nombre }}</span>
+              class="w-full p-2.5 rounded-md text-gray-800 text-sm bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300" />
+            <span class="text-xs text-red-500" v-if="errors.nombre">{{ errors.nombre }}</span>
           </div>
 
+          <!-- Descripción -->
           <div>
-            <label for="descripcion" class="block text-black mb-1 font-semibold">Descripción</label>
+            <label for="descripcion" class="block text-black mb-1 font-semibold text-sm">Descripción</label>
             <textarea v-model="descripcion" id="descripcion" name="descripcion" placeholder="Ingrese una descripción"
-              rows="4" class="w-full p-3 rounded-md text-gray-800 text-sm resize-none bg-gray-100"></textarea>
-            <span class="text-sm text-red-500">{{ errors.descripcion }}</span>
+              rows="3" class="w-full p-2.5 rounded-md text-gray-800 text-sm resize-none bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300"></textarea>
+            <span class="text-xs text-red-500" v-if="errors.descripcion">{{ errors.descripcion }}</span>
           </div>
 
-          <div>
-            <label for="precio" class="block text-black mb-1 font-semibold">Precio</label>
-            <input v-model="precio" id="precio" name="precio" type="number" min="0" placeholder="Ingrese el precio"
-              class="w-full p-3 rounded-md text-gray-800 text-sm bg-gray-100" />
-            <span class="text-sm text-red-500">{{ errors.precio }}</span>
+          <!-- Precio y Imagen en una fila en pantallas medianas y grandes -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="precio" class="block text-black mb-1 font-semibold text-sm">Precio</label>
+              <input v-model="precio" id="precio" name="precio" type="number" min="0" step="0.01" placeholder="0.00"
+                class="w-full p-2.5 rounded-md text-gray-800 text-sm bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300" />
+              <span class="text-xs text-red-500" v-if="errors.precio">{{ errors.precio }}</span>
+            </div>
+
+            <div>
+              <label for="imagen" class="block text-black mb-1 font-semibold text-sm">Imagen</label>
+              <input id="imagen" name="imagen" type="file" accept="image/*" @change="onFileChange"
+                class="w-full p-2.5 rounded-md text-gray-800 text-sm bg-gray-100 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-gray-200 file:text-gray-700 hover:file:bg-gray-300" />
+              <span class="text-xs text-red-500" v-if="errors.imagen">{{ errors.imagen }}</span>
+            </div>
           </div>
 
-          <input id="imagen" name="imagen" type="file" accept="image/*" @change="onFileChange"
-            class="w-full p-3 rounded-md text-gray-800 text-sm bg-gray-100" />
-          <span class="text-sm text-red-500">{{ errors.imagen }}</span>
-
+          <!-- Especialidad -->
           <div>
-            <label for="especialidad" class="block text-black mb-1 font-semibold">Especialidad</label>
+            <label for="especialidad" class="block text-black mb-1 font-semibold text-sm">Especialidad</label>
             <select v-model="especialidad" id="especialidad" name="especialidad"
-              class="w-full p-3 rounded-md text-gray-800 text-sm bg-gray-100">
+              class="w-full p-2.5 rounded-md text-gray-800 text-sm bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300">
               <option value="" disabled>Seleccione una especialidad</option>
               <option v-for="esp in especialidades" :key="esp._id" :value="esp._id">
                 {{ esp.nombre }}
               </option>
             </select>
-            <span class="text-sm text-red-500">{{ errors.especialidad }}</span>
+            <span class="text-xs text-red-500" v-if="errors.especialidad">{{ errors.especialidad }}</span>
           </div>
 
-          <div class="flex items-center gap-2">
-            <input type="checkbox" v-model="imprescindible" id="imprescindible" name="imprescindible"
-              class="w-4 h-4 text-black rounded" />
-            <label for="imprescindible" class="text-black font-medium">¿Es imprescindible?</label>
+          <!-- Checkbox y Oferta en una fila en pantallas medianas y grandes -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
+            <div class="flex items-center gap-2 pt-6">
+              <input type="checkbox" v-model="imprescindible" id="imprescindible" name="imprescindible"
+                class="w-4 h-4 text-black rounded focus:ring-2 focus:ring-gray-300" />
+              <label for="imprescindible" class="text-black font-medium text-sm">¿Es imprescindible?</label>
+            </div>
+
+            <div>
+              <label for="offer" class="block text-black mb-1 font-semibold text-sm">Oferta</label>
+              <input v-model="offer" id="offer" name="offer" type="text" placeholder="Ej: 2x1 en bebidas"
+                class="w-full p-2.5 rounded-md text-gray-800 text-sm bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300" />
+              <span class="text-xs text-red-500" v-if="errors.offer">{{ errors.offer }}</span>
+            </div>
           </div>
 
-          <div>
-            <label for="offer" class="block text-black mb-1 font-semibold">Oferta</label>
-            <input v-model="offer" id="offer" name="offer" type="text" placeholder="Ej: 2x1 en bebidas"
-              class="w-full p-3 rounded-md text-gray-800 text-sm bg-gray-100" />
-            <span class="text-sm text-red-500">{{ errors.offer }}</span>
-          </div>
-
-          <div class="flex gap-4">
+          <!-- Botones -->
+          <div class="flex flex-col sm:flex-row gap-3 pt-4">
             <button type="submit"
-              class="w-1/2 py-2 bg-black text-white rounded-md hover:bg-gray-700 transition duration-300 text-lg font-semibold">
+              class="flex-1 py-2.5 bg-black text-white rounded-md hover:bg-gray-700 transition duration-300 font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-gray-300">
               {{ initialData && initialData._id ? 'Actualizar' : 'Guardar' }}
             </button>
 
             <button type="button" @click="emit('cancel')"
-              class="w-1/2 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400 transition duration-300 text-lg font-semibold">
+              class="flex-1 py-2.5 bg-gray-300 text-black rounded-md hover:bg-gray-400 transition duration-300 font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-gray-300">
               Cancelar
             </button>
-
           </div>
         </form>
       </div>

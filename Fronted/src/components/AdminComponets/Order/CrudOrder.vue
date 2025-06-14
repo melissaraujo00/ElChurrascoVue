@@ -1,12 +1,12 @@
 <script setup>
 import CrudTable from '@/components/AdminComponets/CrudTable.vue';
-import OrderForm from './OrderForm.vue';
 import { ref } from 'vue';
 
 const crudTableRef = ref(null);
 const API_URL = import.meta.env.VITE_API_URL;
 const showModal = ref(false);
 const selected = ref(null);
+const token = localStorage.getItem('token');
 
 function openModal() {
   selected.value = null;
@@ -23,6 +23,7 @@ async function fetchOrders() {
     const res = await fetch(`${API_URL}/orders`, {
       method: 'GET',
       credentials: 'include',
+      Authorization: `Bearer ${token}`,
       headers: {
         'Content-Type': 'application/json'
       }
@@ -45,7 +46,7 @@ async function fetchOrders() {
         if (item.precioUnitario != null) partes.push(`Precio: ${item.precioUnitario}`);
 
         return partes.join(', ');
-      }).filter(str => str).join(' | ') || ''
+      }).filter(str => str).join('\n') || ''
     }));
 
 
@@ -58,10 +59,40 @@ async function fetchOrders() {
   }
 }
 
-function editOrder(order) {
-  selected.value = { ...order };
-  showModal.value = true;
+const estados = ['pendiente', 'en camino', 'entregado'];
+
+async function cambiarEstado(item) {
+  console.log('cambiarEstado llamado para:', item);
+  const indexActual = estados.indexOf(item.estado);
+  if (indexActual === -1) return;
+
+  const siguienteEstado = indexActual < estados.length - 1 ? estados[indexActual + 1] : estados[indexActual];
+
+  if (siguienteEstado === item.estado) return;
+
+  try {
+    const response = await fetch(`${API_URL}/orders/${item._id}/estado`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      credentials: 'include',
+      body: JSON.stringify({ estado: siguienteEstado }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Error al actualizar el estado');
+    }
+
+
+    item.estado = siguienteEstado;
+  } catch (error) {
+    console.error('Error al cambiar estado:', error.message);
+  }
 }
+
 
 function onSaved() {
   crudTableRef.value?.loadData();
@@ -77,13 +108,10 @@ function onSaved() {
     { label: 'Pedido', key: 'pedido' },
     { label: 'Total ($)', key: 'total' },
     { label: 'Indicaciones', key: 'indicaciones' },
+    { label: 'Estado', key: 'estado' },
     { label: 'Fecha', key: 'createdAt' }
-  ]" :fetchData="fetchOrders" :editItem="editOrder"
-    :searchKeys="['clienteName', 'direccion', 'contacto', 'platosNombres']" :showDelete="true"
-    @open-modal="openModal" />
+  ]" :fetchData="fetchOrders" :statusItem="cambiarEstado"
+    :searchKeys="['clienteName', 'direccion', 'contacto', 'platosNombres']" :showDelete="true" :showAddButton="false"
+    :showStatus="true" @open-modal="openModal" />
 
-
-  <div v-if="showModal" class="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50">
-    <OrderForm :initialData="selected" @cancel="closeModal" @saved="onSaved" />
-  </div>
 </template>

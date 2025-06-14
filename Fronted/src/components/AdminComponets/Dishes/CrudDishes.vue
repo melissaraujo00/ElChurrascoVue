@@ -90,7 +90,7 @@ function onSaved() {
         { label: 'Imprescindible', key: 'imprescindible' },
         { label: 'Oferta', key: 'offer' }
     ]" :fetchData="fetchDishes" :editItem="editDish" :deleteItem="deleteDish"
-        :searchKeys="['nombre', 'descripcion', 'offer']" :renderImage="renderImage" :showDelete="true"
+        :searchKeys="['nombre', 'descripcion', 'offer']" :renderImage="renderImage" :showDelete="true" :showEdit="false"
         @open-modal="openModal" />
 
     <div v-if="showModal" class="fixed inset-0 flex justify-center items-center z-50 bg-black/30">

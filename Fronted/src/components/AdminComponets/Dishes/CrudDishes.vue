@@ -5,6 +5,23 @@ import DishForm from './DishForm.vue';
 import { ref } from 'vue';
 import { useToast } from 'vue-toastification';
 const toast = useToast();
+import { getCurrentInstance } from 'vue'
+
+const { proxy } = getCurrentInstance()
+
+function confirmar() {
+  proxy.$swal({
+    title: '¿Estás seguro?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí',
+    cancelButtonText: 'No',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      console.log('Acción confirmada')
+    }
+  })
+}
 
 const API_URL = import.meta.env.VITE_API_URL;
 const crudTableRef = ref(null);
@@ -51,8 +68,18 @@ function editDish(dish) {
 }
 
 async function deleteDish(dish) {
-    if (!confirm(`¿Está seguro que desea eliminar el plato?`)) {
-        return;
+    const result = await proxy.$swal({
+      title: '¿Estás seguro que deseas eliminar este plato?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'No',
+      confirmButtonColor: '#d33',
+    });
+
+    if (!result.isConfirmed) {
+      // El usuario canceló
+      return;
     }
 
     try {
@@ -68,11 +95,9 @@ async function deleteDish(dish) {
         crudTableRef.value?.loadData();
         toast.success('Plato eliminado correctamente');
     } catch (error) {
-      
-       toast.error('Ocurrió un error');
+        toast.error('Ocurrió un error');
     }
 }
-
 function renderImage(path) {
     return `${API_URL}/${path}`;
 }

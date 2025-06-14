@@ -3,6 +3,23 @@ import CrudTable from '@/components/AdminComponets/CrudTable.vue';
 import GalleryForm from './GalleryForm.vue'; // Cambia al nuevo formulario
 import { ref } from 'vue';
 import { useToast } from 'vue-toastification';
+import { getCurrentInstance } from 'vue'
+
+const { proxy } = getCurrentInstance()
+
+function confirmar() {
+  proxy.$swal({
+    title: '¿Estás seguro?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí',
+    cancelButtonText: 'No'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      console.log('Acción confirmada')
+    }
+  })
+}
 
 const toast = useToast();
 
@@ -46,10 +63,19 @@ function editGallery(gallery) {
 }
 
 async function deleteGallery(gallery) {
-  if (!confirm(`¿Está seguro que desea eliminar esta galería?`)) {
+  const result = await proxy.$swal({
+    title: '¿Estás seguro que deseas eliminar este evento?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'No',
+    confirmButtonColor: '#d33',
+  });
+
+  if (!result.isConfirmed) {
+    // El usuario canceló
     return;
   }
-
   try {
     const res = await fetch(`${API_URL}/gallery/${gallery._id}`, {
       method: 'DELETE',
@@ -79,29 +105,16 @@ function onSaved() {
 </script>
 
 <template>
-  <CrudTable
-    ref="crudTableRef"
-    title="Gestión de Galerías"
-    :columns="[
-      { label: 'Título', key: 'title' },
-      { label: 'Descripción', key: 'description' },
-      { label: 'Imagen', key: 'imagen' }
-    ]"
-    :fetchData="fetchGalleries"
-    :editItem="editGallery"
-    :deleteItem="deleteGallery"
-    :searchKeys="['title', 'description']"
-    :renderImage="renderImage"
-    :showDelete="true"
-    :showEdit="true" 
-    @open-modal="openModal"
-  />
+  <CrudTable ref="crudTableRef" title="Gestión de Galerías" :columns="[
+    { label: 'Título', key: 'title' },
+    { label: 'Descripción', key: 'description' },
+    { label: 'Imagen', key: 'imagen' }
+  ]" :fetchData="fetchGalleries" :editItem="editGallery" :deleteItem="deleteGallery"
+    :searchKeys="['title', 'description']" :renderImage="renderImage" :showDelete="true" :showEdit="true"
+    @open-modal="openModal" />
 
   <div v-if="showModal" class="fixed inset-0 flex justify-center items-center z-50 bg-black/30">
-    <button
-      @click="closeModal"
-      class="absolute top-3 right-3 text-gray-600 hover:text-gray-900 font-bold text-xl"
-    >
+    <button @click="closeModal" class="absolute top-3 right-3 text-gray-600 hover:text-gray-900 font-bold text-xl">
     </button>
     <GalleryForm :initialData="selected" @cancel="closeModal" @saved="onSaved" />
   </div>

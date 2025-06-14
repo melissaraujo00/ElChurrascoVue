@@ -4,6 +4,23 @@ import CrudTable from '@/components/AdminComponets/CrudTable.vue';
 import SpecialtyForm from './SpecialtyForm.vue';
 import { ref } from 'vue';
 import { useToast } from 'vue-toastification';
+import { getCurrentInstance } from 'vue'
+
+const { proxy } = getCurrentInstance()
+
+function confirmar() {
+  proxy.$swal({
+    title: '¿Estás seguro?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí',
+    cancelButtonText: 'No'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      console.log('Acción confirmada')
+    }
+  })
+}
 
 const toast = useToast();
 const API_URL = import.meta.env.VITE_API_URL;
@@ -38,9 +55,19 @@ function editSpecialty(s) {
   showModal.value = true;
 }
 async function deleteSpecialty(specialty) {
-  if (!confirm(`¿Está seguro que desea eliminar la especialidad"?`)) {
-    return;
-  }
+  const result = await proxy.$swal({
+      title: '¿Estás seguro que deseas eliminar esta especialidad?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'No',
+      confirmButtonColor: '#d33',
+    });
+
+    if (!result.isConfirmed) {
+      // El usuario canceló
+      return;
+    }
   try {
     const res = await fetch(`${API_URL}/specialty/${specialty._id}`, {
       method: 'DELETE',

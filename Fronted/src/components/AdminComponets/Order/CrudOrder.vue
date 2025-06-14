@@ -1,6 +1,23 @@
 <script setup>
 import CrudTable from '@/components/AdminComponets/CrudTable.vue';
 import { ref } from 'vue';
+import { getCurrentInstance } from 'vue'
+
+const { proxy } = getCurrentInstance()
+
+function confirmar() {
+  proxy.$swal({
+    title: '¿Estás seguro?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí',
+    cancelButtonText: 'No',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      console.log('Acción confirmada')
+    }
+  })
+}
 
 const crudTableRef = ref(null);
 const API_URL = import.meta.env.VITE_API_URL;
@@ -60,7 +77,6 @@ async function fetchOrders() {
 const estados = ['pendiente', 'en camino', 'entregado'];
 
 async function cambiarEstado(item) {
-  console.log('cambiarEstado llamado para:', item);
   const indexActual = estados.indexOf(item.estado);
   if (indexActual === -1) return;
 
@@ -68,9 +84,19 @@ async function cambiarEstado(item) {
 
   if (siguienteEstado === item.estado) return;
 
+  const confirmar = await proxy.$swal({
+    title: `¿Estás seguro de cambiar el pedido de "${item.clienteName}" de "${item.estado}" a "${siguienteEstado}"?`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Si, cambiar el estado',
+    cancelButtonText: 'No',
+    confirmButtonColor: '#d33',
+  });
 
-  const confirmar = window.confirm(`¿Estás seguro de cambiar el estado de "${item.clienteName}" de "${item.estado}" a "${siguienteEstado}"?`);
-  if (!confirmar) return;
+  if (!confirmar.isConfirmed) {
+    // El usuario canceló
+    return;
+  }
 
   try {
     const response = await fetch(`${API_URL}/orders/${item._id}/estado`, {
@@ -96,8 +122,19 @@ async function cambiarEstado(item) {
 
 
 async function eliminarPedido(item) {
-  const confirmar = window.confirm(`¿Estás seguro de eliminar el pedido de ${item.clienteName}?`);
-  if (!confirmar) return;
+  const result = await proxy.$swal({
+    title: '¿Estás seguro que deseas eliminar este pedido?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'No',
+    confirmButtonColor: '#d33',
+  });
+
+  if (!result.isConfirmed) {
+    // El usuario canceló
+    return;
+  }
 
   try {
     const response = await fetch(`${API_URL}/orders/${item._id}`, {
@@ -128,26 +165,16 @@ function onSaved() {
 </script>
 
 <template>
-  <CrudTable 
-    ref="crudTableRef" 
-    title="Gestión de Pedidos" 
-    :columns="[
-      { label: 'Cliente', key: 'clienteName' },
-      { label: 'Contacto', key: 'contacto' },
-      { label: 'Dirección', key: 'direccion' },
-      { label: 'Pedido', key: 'pedido' },
-      { label: 'Total ($)', key: 'total' },
-      { label: 'Indicaciones', key: 'indicaciones' },
-      { label: 'Estado', key: 'estado' },
-      { label: 'Fecha', key: 'createdAt' }
-    ]" 
-    :fetchData="fetchOrders" 
-    :statusItem="cambiarEstado"
-    :deleteItem="eliminarPedido"
-    :searchKeys="['clienteName', 'direccion', 'contacto', 'platosNombres']" 
-    :showDelete="true" 
-    :showAddButton="false"
-    :showStatus="true" 
-    @open-modal="openModal" 
-  />
+  <CrudTable ref="crudTableRef" title="Gestión de Pedidos" :columns="[
+    { label: 'Cliente', key: 'clienteName' },
+    { label: 'Contacto', key: 'contacto' },
+    { label: 'Dirección', key: 'direccion' },
+    { label: 'Pedido', key: 'pedido' },
+    { label: 'Total ($)', key: 'total' },
+    { label: 'Indicaciones', key: 'indicaciones' },
+    { label: 'Estado', key: 'estado' },
+    { label: 'Fecha', key: 'createdAt' }
+  ]" :fetchData="fetchOrders" :statusItem="cambiarEstado" :deleteItem="eliminarPedido"
+    :searchKeys="['clienteName', 'direccion', 'contacto', 'platosNombres']" :showDelete="true" :showAddButton="false"
+    :showStatus="true" @open-modal="openModal" />
 </template>

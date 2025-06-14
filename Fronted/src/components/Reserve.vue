@@ -3,6 +3,8 @@ import { useForm, useField } from 'vee-validate';
 import * as yup from 'yup';
 import axios from 'axios';
 const API_URL = import.meta.env.VITE_API_URL;
+import { useToast } from 'vue-toastification';
+const toast = useToast();
 
 
 const schema = yup.object({
@@ -41,7 +43,7 @@ const { value: additional } = useField('additional');
 
 const onSubmit = handleSubmit(async (values) => {
   try {
-    const response = await axios.post('${API_URL}/reservations', {
+    const response = await axios.post(`${API_URL}/reservations`, {
       nombre: values.name,
       numeroPersonas: values.people,
       fecha: values.date,
@@ -50,7 +52,7 @@ const onSubmit = handleSubmit(async (values) => {
       datosAdicionales: values.additional
     });
 
-    alert(response.data.message);
+    toast.success("Se ha realizado su reservación correctamente");
 
     name.value = '';
     people.value = '';
@@ -59,8 +61,7 @@ const onSubmit = handleSubmit(async (values) => {
     contacts.value = '';
     additional.value = '';
   } catch (error) {
-    console.error(error);
-    alert('Ocurrió un error al enviar la reserva.');
+    error.success("Ha ocurrido un error");
   }
 });
 </script>
@@ -118,7 +119,7 @@ const onSubmit = handleSubmit(async (values) => {
           </div>
 
           <button type="submit"
-            class="w-full py-2 bg-black text-white rounded-md hover:bg-amber-400 transition duration-300 text-lg font-semibold">
+            class="w-full py-2 bg-black text-white rounded-md hover:bg-gray-800 transition duration-300 text-lg font-semibold">
             Reservar
           </button>
         </form>

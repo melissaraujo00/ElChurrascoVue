@@ -95,8 +95,8 @@ const filteredItems = computed(() => {
 
       <div class="p-4 shadow-inner rounded-b-2xl max-w-7xl mx-auto">
         <table
-          class="w-full text-sm text-left text-gray-900 border border-gray-600 rounded-2xl overflow-hidden shadow-2xl">
-          <thead class="text-xs uppercase bg-red-800 text-white">
+          class="min-w-full w-full text-sm text-left text-gray-900 border border-gray-600 rounded-2xl overflow-hidden shadow-2xl">
+          <thead class="text-xs uppercase bg-red-800 text-white hidden sm:table-header-group ...">
             <tr>
               <th v-for="col in columns" :key="col.key" class="px-5 py-3">{{ col.label }}</th>
               <th class="px-5 py-3">Acción</th>
@@ -104,8 +104,8 @@ const filteredItems = computed(() => {
           </thead>
           <tbody>
             <tr v-for="item in filteredItems" :key="item._id"
-              class="odd:bg-gray-300 even:bg-gray-200 border-b-gray-50 text-gray-950">
-              <td v-for="col in columns" :key="col.key" class="px-5 py-3">
+              class="sm:table-row flex flex-col sm:flex-row odd:bg-gray-300 even:bg-gray-200 border-b-gray-50 text-gray-950 mb-4 sm:mb-0 bg-white rounded-xl p-4 sm:p-0 shadow-md">
+              <td v-for="col in columns" :key="col.key" class="px-5 py-3  sm:table-cell flex justify-between border-b border-gray-200 sm:border-0"> 
                 <template v-if="renderImage && col.key === 'imagen'">
                   <img :src="renderImage(item[col.key])" alt="Imagen" class="h-16 w-24 object-cover rounded-md" />
                 </template>

@@ -68,7 +68,7 @@ async function cambiarEstado(item) {
 
   if (siguienteEstado === item.estado) return;
 
-  // Confirmación antes de cambiar
+
   const confirmar = window.confirm(`¿Estás seguro de cambiar el estado de "${item.clienteName}" de "${item.estado}" a "${siguienteEstado}"?`);
   if (!confirmar) return;
 

@@ -45,7 +45,7 @@ const router = createRouter({
   routes
 })
 
-// 🛡️ Protección de rutas
+// Protección de rutas
 router.beforeEach(async (to, from, next) => {
   const { checkAuthStatus, isAuthenticated, userRole } = useAuth()
 
